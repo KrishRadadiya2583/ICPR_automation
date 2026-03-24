@@ -13,6 +13,16 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "chalk": "^4.1.2",
+    "config": "^4.4.1",
     "puppeteer": "^24.40.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KrishRadadiya2583/Registration_Automation.git"
+  },
+  "bugs": {
+    "url": "https://github.com/KrishRadadiya2583/Registration_Automation/issues"
+  },
+  "homepage": "https://github.com/KrishRadadiya2583/Registration_Automation#readme"
 }

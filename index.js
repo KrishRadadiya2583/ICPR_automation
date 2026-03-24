@@ -1,5 +1,7 @@
+const chalk = require("chalk")
 const { launchBrowser } = require("./config/puppeteer");
 const { runAutomation } = require("./services/automation");
+
 
 (async () => {
     const browser = await launchBrowser();
@@ -11,7 +13,7 @@ const { runAutomation } = require("./services/automation");
     try {
         await runAutomation(page);
     } catch (err) {
-        console.error("❌ Error:", err.message);
+        console.error(chalk.red("[❌ Error:]"), err.message);
     }
 
     // await browser.close();
