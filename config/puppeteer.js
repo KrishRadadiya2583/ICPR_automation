@@ -3,7 +3,8 @@ const puppeteer = require("puppeteer");
 async function launchBrowser() {
     return await puppeteer.launch({
         headless: true,
-        executablePath: '/usr/bin/google-chrome-stable',
+        browser: 'chromium',
+        cacheDirectory: '/opt/render/.cache/puppeteer',
         defaultViewport: null,
         args: [
             "--no-sandbox",
