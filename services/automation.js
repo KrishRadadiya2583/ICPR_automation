@@ -184,6 +184,55 @@ console.log("submit button click success")
 console.log(chalk.bgGreen("report "+i+" generate  successfull"))
 }
 
+// unlock latest report 
+
+await delay(1000)
+
+await page.waitForSelector(".UnlockFullReport",{visible:true})
+
+await delay(1000)
+
+await page.click(".UnlockFullReport")
+
+// again click on unlock report
+
+await delay(1000)
+
+await page.waitForSelector(".vc_btn3-inline",{visible:true})
+
+await delay(1000)
+
+await page.click(".vc_btn3-inline")
+
+console.log(chalk.bgGreenBright("unlock latest report success"))
+
+console.log(chalk.bgGray("report open successfull"))
+
+
+// close info page
+
+await delay(2000)
+
+await page.waitForSelector(".accuracy__transparent_btn",{visible:true})
+
+await delay(1000)
+
+await page.click(".accuracy__transparent_btn")
+
+console.log(chalk.bgMagentaBright("info page close success"))
+
+
+// view report
+await delay(2000)
+
+await page.waitForSelector(".report__popup_pay_btn",{visible:true})
+
+await delay(1000)
+
+await page.click(".report__popup_pay_btn")
+
+console.log(chalk.bgYellowBright("view report success")    )
+
 }
 
 module.exports = { runAutomation };
