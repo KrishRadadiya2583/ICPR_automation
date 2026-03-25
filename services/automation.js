@@ -2,8 +2,7 @@ require('dotenv').config();
 const chalk = require("chalk");
 const delay = require("../utils/delay");
 const { randomMobile, randomEmail } = require("../utils/generator");
-const { loadavg } = require("node:os");
-const { Load } = require("config/lib/util");
+
 
 async function runAutomation(page) {
     console.log(chalk.green("[START]"), "opning url in browser...");
@@ -39,8 +38,8 @@ async function runAutomation(page) {
 
     await page.type("#input", email, { delay: 200 });
 
-    
-await delay(1000)
+
+    await delay(process.env.COMMON_DELAY_ONCLICKS)
     // ===== STEP 4: REGISTER =====
     await page.click("button.hl_cta_wrap");
 
@@ -48,32 +47,32 @@ await delay(1000)
     await delay(5000);
 
     // ===== STEP 5: HANDLE IFRAME =====
-   console.log(chalk.yellow("Waiting for payment iframe..."));
+    console.log(chalk.yellow("Waiting for payment iframe..."));
 
-// Wait until iframe appears in DOM
-await page.waitForSelector("iframe", { timeout: 15000 });
+    // Wait until iframe appears in DOM
+    await page.waitForSelector("iframe", { timeout: 15000 });
 
-// Wait until correct iframe is loaded
-const frame = await new Promise((resolve, reject) => {
-    const timeout = setTimeout(() => reject("Iframe timeout"), 15000);
+    // Wait until correct iframe is loaded
+    const frame = await new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => reject("Iframe timeout"), 15000);
 
-    const checkFrame = () => {
-        const frame = page.frames().find(f =>
-            f.url().includes("stripe") || f.url().includes("payment")
-        );
+        const checkFrame = () => {
+            const frame = page.frames().find(f =>
+                f.url().includes("stripe") || f.url().includes("payment")
+            );
 
-        if (frame) {
-            clearTimeout(timeout);
-            resolve(frame);
-        } else {
-            setTimeout(checkFrame, 500);
-        }
-    };
+            if (frame) {
+                clearTimeout(timeout);
+                resolve(frame);
+            } else {
+                setTimeout(checkFrame, 500);
+            }
+        };
 
-    checkFrame();
-});
+        checkFrame();
+    });
 
-console.log(chalk.red(" Payment frame found"));
+    console.log(chalk.red(" Payment frame found"));
 
     // Card Number
 
@@ -95,143 +94,143 @@ console.log(chalk.red(" Payment frame found"));
     console.log(chalk.magenta(" Payment Done"));
 
 
-    console.log(chalk.green("[success]"),"user register successfully")
+    console.log(chalk.green("[success]"), "user register successfully")
 
 
-// click on continue to open dashboard
-await delay(5000)
+    // click on continue to open dashboard
+    await delay(5000)
 
-await page.waitForSelector("button.continue-btn", { visible: true });
+    await page.waitForSelector("button.continue-btn", { visible: true });
 
-await delay(2000)
-await page.click("button.continue-btn");
+    await delay(2000)
+    await page.click("button.continue-btn");
 
-  console.log(chalk.green("[successfull]"),"dashboard load successfull")
+    console.log(chalk.green("[successfull]"), "dashboard load successfull")
 
 
-  await delay(4000)
+    await delay(4000)
 
 
-  // submit review default 4 star
+    // submit review default 4 star
 
-await page.waitForSelector(".ant-rate-star-second",{visible:true});
+    await page.waitForSelector(".ant-rate-star-second", { visible: true });
 
-await delay(1000)
+    await delay(process.env.COMMON_DELAY_ONCLICKS)
 
-await page.click('.ant-rate-star:nth-child(4)');
+    await page.click('.ant-rate-star:nth-child(4)');
 
-console.log(chalk.bgBlue("review submit success"))
+    console.log(chalk.bgBlue("review submit success"))
 
-await delay(1000)
+    await delay(process.env.COMMON_DELAY_ONCLICKS)
 
-//  close review modal
-await page.waitForSelector(".ant-modal-close",{visible:true});
+    //  close review modal
+    await page.waitForSelector(".ant-modal-close", { visible: true });
 
-await delay(1000)
+    await delay(process.env.COMMON_DELAY_ONCLICKS)
 
-await page.click('.ant-modal-close');
+    await page.click('.ant-modal-close');
 
-console.log(chalk.bgBlue("review close button click success"))
+    console.log(chalk.bgBlue("review close button click success"))
 
-// close report modal
+    // close report modal
 
-await delay(1000)
+    await delay(process.env.COMMON_DELAY_ONCLICKS)
 
-await page.waitForSelector(".ant-modal-close-x",{visible:true})
+    await page.waitForSelector(".ant-modal-close-x", { visible: true })
 
-await delay(1000)
+    await delay(process.env.COMMON_DELAY_ONCLICKS)
 
-await page.click(".ant-modal-close-x")
+    await page.click(".ant-modal-close-x")
 
-console.log(chalk.bgYellow("report close button click success"))
+    console.log(chalk.bgYellow("report close button click success"))
 
 
-// generate new report
+    // generate new report
 
-for (let i=1;i<=process.env.REPORT_COUNT;i++){
+    for (let i = 1; i <= process.env.REPORT_COUNT; i++) {
 
-await page.waitForSelector("a.menu_button[href='/en/dashboard']",{visible:true})
+        await page.waitForSelector("a.menu_button[href='/en/dashboard']", { visible: true })
 
-await delay(1000)
+        await delay(process.env.COMMON_DELAY_ONCLICKS)
 
-await page.click("a.menu_button[href='/en/dashboard']")
+        await page.click("a.menu_button[href='/en/dashboard']")
 
-console.log("generate new report button click success")
+        console.log("generate new report button click success")
 
-// input number for new report
+        // input number for new report
 
-await delay(1000)
+        await delay(process.env.COMMON_DELAY_ONCLICKS)
 
-await page.waitForSelector('.ant-input-outlined.input-form.form-control',{visible:true});
+        await page.waitForSelector('.ant-input-outlined.input-form.form-control', { visible: true });
 
-const inputs = await page.$$('.ant-input-outlined.input-form.form-control');
-await inputs[1].type(randomMobile(), { delay: 200 }); // second input
+        const inputs = await page.$$('.ant-input-outlined.input-form.form-control');
+        await inputs[1].type(randomMobile(), { delay: 200 }); // second input
 
-await delay(1000)
-console.log("number enter success")
+        await delay(process.env.COMMON_DELAY_ONCLICKS)
+        console.log("number enter success")
 
 
-// click on submit
+        // click on submit
 
-await delay(1000)
+        await delay(process.env.COMMON_DELAY_ONCLICKS)
 
-await page.waitForSelector("#btnSubmit",{visible:true})
+        await page.waitForSelector("#btnSubmit", { visible: true })
 
-await page.click("#btnSubmit")
+        await page.click("#btnSubmit")
 
-console.log("submit button click success")
+        console.log("submit button click success")
 
-console.log(chalk.bgGreen("report "+i+" generate  successfull"))
-}
+        console.log(chalk.bgGreen("report " + i + " generate  successfull"))
+    }
 
-// unlock latest report 
+    // unlock latest report 
 
-await delay(1000)
+    await delay(process.env.COMMON_DELAY_ONCLICKS)
 
-await page.waitForSelector(".UnlockFullReport",{visible:true})
+    await page.waitForSelector(".UnlockFullReport", { visible: true })
 
-await delay(1000)
+    await delay(process.env.COMMON_DELAY_ONCLICKS)
 
-await page.click(".UnlockFullReport")
+    await page.click(".UnlockFullReport")
 
-// again click on unlock report
+    // again click on unlock report
 
-await delay(1000)
+    await delay(process.env.COMMON_DELAY_ONCLICKS)
 
-await page.waitForSelector(".vc_btn3-inline",{visible:true})
+    await page.waitForSelector(".vc_btn3-inline", { visible: true })
 
-await delay(1000)
+    await delay(process.env.COMMON_DELAY_ONCLICKS)
 
-await page.click(".vc_btn3-inline")
+    await page.click(".vc_btn3-inline")
 
-console.log(chalk.bgGreenBright("unlock latest report success"))
+    console.log(chalk.bgGreenBright("unlock latest report success"))
 
-console.log(chalk.bgGray("report open successfull"))
+    console.log(chalk.bgGray("report open successfull"))
 
 
-// close info page
+    // close info page
 
-await delay(2000)
+    await delay(2000)
 
-await page.waitForSelector(".accuracy__transparent_btn",{visible:true})
+    await page.waitForSelector(".accuracy__transparent_btn", { visible: true })
 
-await delay(1000)
+    await delay(process.env.COMMON_DELAY_ONCLICKS)
 
-await page.click(".accuracy__transparent_btn")
+    await page.click(".accuracy__transparent_btn")
 
-console.log(chalk.bgMagentaBright("info page close success"))
+    console.log(chalk.bgMagentaBright("info page close success"))
 
 
-// view report
-await delay(2000)
+    // view report
+    await delay(2000)
 
-await page.waitForSelector(".report__popup_pay_btn",{visible:true})
+    await page.waitForSelector(".report__popup_pay_btn", { visible: true })
 
-await delay(1000)
+    await delay(process.env.COMMON_DELAY_ONCLICKS)
 
-await page.click(".report__popup_pay_btn")
+    await page.click(".report__popup_pay_btn")
 
-console.log(chalk.bgYellowBright("view report success")    )
+    console.log(chalk.bgYellowBright("view report success"))
 
 }
 
