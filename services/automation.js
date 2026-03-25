@@ -1,11 +1,14 @@
+require('dotenv').config();
 const chalk = require("chalk");
 const delay = require("../utils/delay");
 const { randomMobile, randomEmail } = require("../utils/generator");
+const { loadavg } = require("node:os");
+const { Load } = require("config/lib/util");
 
 async function runAutomation(page) {
     console.log(chalk.green("[START]"), "opning url in browser...");
 
-    await page.goto("https://dev-pr.infochecker.com/en/track?c=usd1", {
+    await page.goto(process.env.WEBSITE_URL, {
         waitUntil: "load",
     });
 
@@ -76,17 +79,17 @@ console.log(chalk.red(" Payment frame found"));
 
     console.log(chalk.blue("card detailes fill start"))
     await frame.waitForSelector("#ccnumber");
-    await frame.type("#ccnumber", "4067429974719265", { delay: 200 });
+    await frame.type("#ccnumber", process.env.CARD_NUMBER, { delay: 200 });
 
     // Expiry
-    await frame.type("#cardExpiry", "12/34", { delay: 200 });
+    await frame.type("#cardExpiry", process.env.CARD_EXPIRY, { delay: 200 });
 
     // CVV
-    await frame.type("#cvv2", "123", { delay: 200 });
+    await frame.type("#cvv2", process.env.CARD_CVV, { delay: 200 });
 
     console.log(chalk.green("Card details filled"));
 
-    // Submit
+    // Submit card details
     await page.click("#submit");
 
     console.log(chalk.magenta(" Payment Done"));
@@ -95,9 +98,8 @@ console.log(chalk.red(" Payment frame found"));
     console.log(chalk.green("[success]"),"user register successfully")
 
 
-// click on continue
-
-await delay(4000)
+// click on continue to open dashboard
+await delay(5000)
 
 await page.waitForSelector("button.continue-btn", { visible: true });
 
@@ -107,9 +109,80 @@ await page.click("button.continue-btn");
   console.log(chalk.green("[successfull]"),"dashboard load successfull")
 
 
-  await delay(2000)
+  await delay(4000)
 
 
+  // submit review default 4 star
+
+await page.waitForSelector(".ant-rate-star-second",{visible:true});
+
+await delay(1000)
+
+await page.click('.ant-rate-star:nth-child(4)');
+
+console.log(chalk.bgBlue("review submit success"))
+
+await delay(1000)
+
+//  close review modal
+await page.waitForSelector(".ant-modal-close",{visible:true});
+
+await delay(1000)
+
+await page.click('.ant-modal-close');
+
+console.log(chalk.bgBlue("review close button click success"))
+
+// close report modal
+
+await delay(1000)
+
+await page.waitForSelector(".ant-modal-close-x",{visible:true})
+
+await delay(1000)
+
+await page.click(".ant-modal-close-x")
+
+console.log(chalk.bgYellow("report close button click success"))
+
+
+// generate new report
+
+for (let i=1;i<=process.env.REPORT_COUNT;i++){
+
+await page.waitForSelector("a.menu_button[href='/en/dashboard']",{visible:true})
+
+await delay(1000)
+
+await page.click("a.menu_button[href='/en/dashboard']")
+
+console.log("generate new report button click success")
+
+// input number for new report
+
+await delay(1000)
+
+await page.waitForSelector('.ant-input-outlined.input-form.form-control',{visible:true});
+
+const inputs = await page.$$('.ant-input-outlined.input-form.form-control');
+await inputs[1].type(randomMobile(), { delay: 200 }); // second input
+
+await delay(1000)
+console.log("number enter success")
+
+
+// click on submit
+
+await delay(1000)
+
+await page.waitForSelector("#btnSubmit",{visible:true})
+
+await page.click("#btnSubmit")
+
+console.log("submit button click success")
+
+console.log(chalk.bgGreen("report "+i+" generate  successfull"))
+}
 
 }
 
