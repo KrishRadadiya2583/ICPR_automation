@@ -1,5 +1,6 @@
 require('dotenv').config();
 const chalk = require("chalk");
+const fs = require('fs')
 const delay = require("../utils/delay");
 const { randomMobile, randomEmail } = require("../utils/generator");
 
@@ -7,234 +8,280 @@ const { randomMobile, randomEmail } = require("../utils/generator");
 async function runAutomation(page) {
     console.log(chalk.green("[START]"), "opning url in browser...");
 
-    await page.goto(process.env.WEBSITE_URL, {
-        waitUntil: "load",
-    });
+    async function ensureAtHome() {
+        const targetUrl = process.env.WEBSITE_URL.trim();
+        await page.goto(targetUrl, { waitUntil: "load" });
+    }
+
+    async function findPaymentFrame() {
+        const allowed = ["stripe", "payment", "checkout"];
+
+        const start = Date.now();
+        while (Date.now() - start < 15000) {
+            const frame = page.frames().find((f) => {
+                const u = f.url();
+                if (!u) return false;
+                return allowed.some((token) => u.includes(token));
+            });
+
+            if (frame) return frame;
+            await delay(300);
+        }
+
+        throw new Error("Payment iframe not found");
+    }
+
+    await ensureAtHome();
 
     // ===== STEP 1: MOBILE =====
 
+    async function registerusers(page) {
 
-    const mobile = randomMobile();
-    console.log(chalk.blue("Mobile:"), mobile);
+        const mobile = randomMobile();
+        console.log(chalk.blue("Mobile:"), mobile);
 
-    await page.waitForSelector("input[placeholder='Enter a phone number']");
-    await page.type("input[placeholder='Enter a phone number']", mobile,{delay:10});
+        await page.waitForSelector("input[placeholder='Enter a phone number']");
+        await page.type("input[placeholder='Enter a phone number']", mobile, { delay: 10 });
 
-    // ===== STEP 2: SEARCH =====
-    await Promise.all([
-        page.waitForNavigation(),
-        page.click("button[type='submit']")
-    ]);
+        // ===== STEP 2: SEARCH =====
+        await Promise.all([
+            page.waitForNavigation(),
+            page.click("button[type='submit']")
+        ]);
 
-    console.log(chalk.green("Search submitted"));
+        console.log(chalk.green("Search submitted"));
 
-    // ===== STEP 3: EMAIL =====
-
-    
-    await page.waitForSelector("#input", { visible: true });
-    const email = randomEmail();
-    console.log(chalk.blueBright("Email:", email));
-    await page.type("#input", email,{delay:10});
+        // ===== STEP 3: EMAIL =====
 
 
-    // ===== STEP 4: REGISTER =====
-    await page.click("button.hl_cta_wrap");
-
-    console.log(chalk.cyan("Waiting for payment page..."));
-    // ===== STEP 5: HANDLE IFRAME =====
-    console.log(chalk.yellow("Waiting for payment iframe..."));
-
-    // Wait until iframe appears in DOM
-    await page.waitForSelector("iframe",{visible:true});
-
-    // Wait until correct iframe is loaded
-    const frame = await new Promise((resolve, reject) => {
-        const timeout = setTimeout(() => reject("Iframe timeout"), 15000);
-
-        const checkFrame = () => {
-            const frame = page.frames().find(f =>
-                f.url().includes("stripe") || f.url().includes("payment")
-            );
-
-            if (frame) {
-                clearTimeout(timeout);
-                resolve(frame);
-            } else {
-                setTimeout(checkFrame, 500);
-            }
-        };
-
-        checkFrame();
-    });
-
-    console.log(chalk.red(" Payment frame found"));
-
-    // Card Number
-
-    console.log(chalk.blue("card detailes fill start"))
-    await frame.waitForSelector("#ccnumber",{visible:true});
-    await frame.type("#ccnumber", process.env.CARD_NUMBER, { delay: 10 });
-
-    // Expiry
-    await frame.waitForSelector("#cardExpiry",{visible:true});
-    await frame.type("#cardExpiry", process.env.CARD_EXPIRY, { delay: 10 });
-
-    // CVV
-    await frame.waitForSelector("#cvv2",{visible:true});
-    await frame.type("#cvv2", process.env.CARD_CVV, { delay: 10 });
-
-    console.log(chalk.green("Card details filled"));
-
-    // Submit card details
-    await page.waitForSelector("#submit",{visible:true});
-    await page.click("#submit");
-
-    console.log(chalk.magenta(" Payment Done"));
+        await page.waitForSelector("#input", { visible: true });
+        const email = randomEmail();
+        console.log(chalk.blueBright("Email:", email));
+        await page.type("#input", email, { delay: 10 });
 
 
-    console.log(chalk.green("[success]"), "user register successfully")
+        // ===== STEP 4: REGISTER =====
+        await page.click("button.hl_cta_wrap");
 
 
-    // click on continue to open dashboard
+        
 
-    await page.waitForSelector("button.continue-btn", { visible: true });
-    await page.click("button.continue-btn");
+        console.log(chalk.cyan("Waiting for payment page..."));
+        // ===== STEP 5: HANDLE IFRAME =====
+        console.log(chalk.yellow("Waiting for payment iframe..."));
 
-    console.log(chalk.green("[successfull]"), "dashboard load successfull")
+        await page.waitForSelector("iframe", { visible: true, timeout: 120000 });
 
-    // submit review default 4 star
+        const frame = await findPaymentFrame();
 
-    await page.waitForSelector(".ant-rate-star-second", { visible: true });
+        console.log(chalk.green("Payment frame found"));
+        console.log(chalk.blue("Frame URL:"), frame.url());
+
+        // Card Number
+        console.log(chalk.blue("card details fill start"));
+        await delay(1000);
+        await frame.waitForSelector("#ccnumber", { visible: true });
+        await frame.type("#ccnumber", process.env.CARD_NUMBER, { delay: 10 });
+        await delay(500);
+
+        // Expiry
+        await frame.waitForSelector("#cardExpiry", { visible: true });
+        await frame.type("#cardExpiry", process.env.CARD_EXPIRY, { delay: 10 });
+        await delay(500);
+
+        // CVV
+        await frame.waitForSelector("#cvv2", { visible: true });
+        await frame.type("#cvv2", process.env.CARD_CVV, { delay: 10 });
+        await delay(500);
+
+        console.log(chalk.green("Card details filled"));
+
+        // Submit card details
+        const submitElement = await frame.$("#submit");
+        if (submitElement) {
+            await submitElement.click();
+        } else {
+            await page.waitForSelector("#submit", { visible: true });
+            await page.click("#submit");
+        }
+
+        console.log(chalk.magenta(" Payment Done"));
+
+        if(process.env.USER_REGISTRATION_COUNT>1){
+        fs.appendFileSync("users.txt",`user email:${email}\n`)
+        }
+        console.log(chalk.green("[success]"), "user register successfully")
 
 
 
-    await page.click('.ant-rate-star:nth-child(4)');
+        // click on continue to open dashboard
+        await delay(500)
 
-    console.log(chalk.bgBlue("review submit success"))
+        await page.waitForSelector("button.continue-btn", { visible: true });
+        await page.click("button.continue-btn");
 
- 
+        console.log(chalk.green("[successfull]"), "dashboard load successfull")
 
-    //  close review modal
-    await page.waitForSelector(".ant-modal-close", { visible: true });
+        // submit review default 4 star
 
- 
-
-    await page.click('.ant-modal-close');
-
-    console.log(chalk.bgBlue("review close button click success"))
-
-    // close report modal
+        await page.waitForSelector(".ant-rate-star-second", { visible: true });
 
 
-    await page.waitForSelector(".ant-modal-close-x", { visible: true })
-await delay(500)
-    await page.click(".ant-modal-close-x")
 
-    console.log(chalk.bgYellow("report close button click success"))
+        await page.click('.ant-rate-star:nth-child(4)');
 
-
-    await page.waitForSelector(".ant-dropdown-trigger",{visible:true})
-    await delay(500)
-    await page.click(".ant-dropdown-trigger")
-
-    await delay(500)
-    
-    //  const inputs = await page.$$('.mobile_menu_option');
-    //  await inputs[5].click(); 
-
-    // console.log(chalk.bgBlue("logout success"))
+        console.log(chalk.bgBlue("review submit success"))
 
 
-    // generate new report
+
+        //  close review modal
+        await page.waitForSelector(".ant-modal-close", { visible: true });
 
 
-    for (let i = 1; i <= process.env.REPORT_COUNT; i++) {
 
-        await page.waitForSelector('a[data-title="Search other Number"]', { visible: true })
+        await page.click('.ant-modal-close');
 
-        await delay(1000)
+        console.log(chalk.bgBlue("review close button click success"))
 
-        await page.click("a[data-title='Search other Number']")
-
-        console.log("generate new report button click success")
+        // close report modal
 
 
-        // input number for new report
+        await page.waitForSelector(".ant-modal-close-x", { visible: true })
+        await delay(500)
+        await page.click(".ant-modal-close-x")
 
-        await delay(3000)
+        console.log(chalk.bgYellow("report close button click success"))
+    }
 
-        await page.waitForSelector('.ant-input-outlined.input-form.form-control', { visible: true });
+    async function logout(page) {
+
+        await page.waitForSelector(".ant-dropdown-trigger", { visible: true })
+        await delay(500)
+        await page.click(".ant-dropdown-trigger")
 
         await delay(500)
 
-      const inputs = await page.$$('.ant-input-outlined.input-form.form-control');
-        await inputs[1].type(randomMobile(), { delay: 10 }); // second input
+        const inputs = await page.$$('.mobile_menu_option');
+        await inputs[5].click();
 
-  
-        console.log("number enter success")
+        await page.waitForNavigation({ waitUntil: 'load' });
 
-
-        // click on submit
-
-     
-
-        await page.waitForSelector("#btnSubmit", { visible: true })
-
-        await page.click("#btnSubmit")
-
-        console.log("submit button click success")
-
-        console.log(chalk.bgGreen("report " + i + " generate  successfull"))
+        console.log(chalk.bgBlue("logout success"))
     }
 
-    // unlock latest report 
+    async function generateReportsAndUnlock(page) {
+        for (let i = 1; i <= process.env.REPORT_COUNT; i++) {
+
+            await page.waitForSelector('a[data-title="Search other Number"]', { visible: true })
+
+            await delay(1000)
+
+            await page.click("a[data-title='Search other Number']")
+
+            console.log("generate new report button click success")
+
+
+            // input number for new report
+
+            await delay(1000)
+
+            await page.waitForSelector('.ant-input-outlined.input-form.form-control', { visible: true });
+
+            await delay(500)
+
+            const inputs = await page.$$('.ant-input-outlined.input-form.form-control');
+            await inputs[1].type(randomMobile(), { delay: 10 }); // second input
+
+
+            console.log("number enter success")
+
+            // click on submit
+
+            await page.waitForSelector("#btnSubmit", { visible: true })
+
+            await page.click("#btnSubmit")
+
+            console.log("submit button click success")
+
+            console.log(chalk.bgGreen("report " + i + " generate  successfull"))
+        }
+
+        if (process.env.UNLOCK_REPORT == "true") {
+
+            // unlock latest report 
+
+            await delay(500)
+            await page.waitForSelector(".UnlockFullReport", { visible: true })
+
+            await delay(500)
+
+            await page.click(".UnlockFullReport")
+
+            // again click on unlock report
+
+            await page.waitForSelector(".vc_btn3-inline", { visible: true })
+
+            await delay(500)
+
+            await page.click(".vc_btn3-inline")
+
+            // Play sound for unlock
+            process.stdout.write('\x07');
+
+            console.log(chalk.bgGreenBright("unlock latest report success"))
+
+        }
+
+        // Always open the report
+        console.log(chalk.bgGray("report open successfull"))
+
+        // close info page
+
+        await page.waitForSelector(".accuracy__transparent_btn", { visible: true })
+
+        await delay(500)
+
+        await page.click(".accuracy__transparent_btn")
+
+        console.log(chalk.bgMagentaBright("info page close success"))
+
+        // view report
+
+        await page.waitForSelector(".report__popup_pay_btn", { visible: true })
+
+        await delay(500)
+
+        await page.click(".report__popup_pay_btn")
+
+        console.log(chalk.bgYellowBright("view report success"))
+    }
+
+    if (process.env.USER_REGISTRATION_COUNT > 1) {
+        for (let i = 1; i <= process.env.USER_REGISTRATION_COUNT; i++) {
+            try {
+                await ensureAtHome();
+                await registerusers(page)
+                console.log(chalk.bgGreen("[success]"), "user " + i + " register successfully")
+                await logout(page)
+                await delay(500)
+            } catch (err) {
+                console.error(chalk.red("[Error for user " + i + "]"), err.message);
+            }
+        }
+    } else {
+        try {
+            await registerusers(page)
+            await generateReportsAndUnlock(page)
+        } catch (err) {
+            console.error(chalk.red("[Error]"), err.message);
+        }
+    }
 
 
 
-    await page.waitForSelector(".UnlockFullReport", { visible: true })
-
-    await delay(500)
-
-    await page.click(".UnlockFullReport")
-
-    // again click on unlock report
-
- 
-
-    await page.waitForSelector(".vc_btn3-inline", { visible: true })
-
-    await delay(500)
-
-    await page.click(".vc_btn3-inline")
-
-    console.log(chalk.bgGreenBright("unlock latest report success"))
-
-    console.log(chalk.bgGray("report open successfull"))
-
-
-    // close info page
 
 
 
-    await page.waitForSelector(".accuracy__transparent_btn", { visible: true })
-
-    await delay(500)
-
-    await page.click(".accuracy__transparent_btn")
-
-    console.log(chalk.bgMagentaBright("info page close success"))
-
-
-    // view report
- 
-
-    await page.waitForSelector(".report__popup_pay_btn", { visible: true })
-
-    await delay(500)
-    
-    await page.click(".report__popup_pay_btn")
-
-    console.log(chalk.bgYellowBright("view report success"))
 
 }
 
