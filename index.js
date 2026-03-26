@@ -7,8 +7,8 @@ const { runAutomation } = require("./services/automation");
     const browser = await launchBrowser();
     const page = await browser.newPage();
 
-    page.setDefaultTimeout(60000);
-    page.setDefaultNavigationTimeout(60000);
+    page.setDefaultTimeout(120000);
+    page.setDefaultNavigationTimeout(120000);
 
     try {
         await runAutomation(page);
