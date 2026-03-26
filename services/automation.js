@@ -107,9 +107,7 @@ async function runAutomation(page) {
 
         console.log(chalk.magenta(" Payment Done"));
 
-        if(process.env.USER_REGISTRATION_COUNT>1){
-        fs.appendFileSync("users.txt",`user email:${email}\n`)
-        }
+        
         console.log(chalk.green("[success]"), "user register successfully")
 
 
@@ -151,6 +149,10 @@ async function runAutomation(page) {
         await page.click(".ant-modal-close-x")
 
         console.log(chalk.bgYellow("report close button click success"))
+
+        if(process.env.USER_REGISTRATION_COUNT>1){
+        fs.appendFileSync("users.txt",`user email:${email}\n`)
+        }
     }
 
     async function logout(page) {
@@ -230,7 +232,6 @@ async function runAutomation(page) {
 
             console.log(chalk.bgGreenBright("unlock latest report success"))
 
-        }
 
         // Always open the report
         console.log(chalk.bgGray("report open successfull"))
@@ -254,6 +255,7 @@ async function runAutomation(page) {
         await page.click(".report__popup_pay_btn")
 
         console.log(chalk.bgYellowBright("view report success"))
+        }
     }
 
     if (process.env.USER_REGISTRATION_COUNT > 1) {
