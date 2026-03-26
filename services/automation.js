@@ -41,7 +41,7 @@ async function runAutomation(page) {
         console.log(chalk.blue("Mobile:"), mobile);
 
         await page.waitForSelector("input[placeholder='Enter a phone number']");
-        await page.type("input[placeholder='Enter a phone number']", mobile, { delay: 10 });
+        await page.type("input[placeholder='Enter a phone number']", mobile, { delay: 50 });
 
         // ===== STEP 2: SEARCH =====
         await Promise.all([
@@ -57,7 +57,7 @@ async function runAutomation(page) {
         await page.waitForSelector("#input", { visible: true });
         const email = randomEmail();
         console.log(chalk.blueBright("Email:", email));
-        await page.type("#input", email, { delay: 10 });
+        await page.type("#input", email, { delay: 50 });
 
 
         // ===== STEP 4: REGISTER =====
@@ -81,17 +81,17 @@ async function runAutomation(page) {
         console.log(chalk.blue("card details fill start"));
         await delay(1000);
         await frame.waitForSelector("#ccnumber", { visible: true });
-        await frame.type("#ccnumber", process.env.CARD_NUMBER, { delay: 10 });
+        await frame.type("#ccnumber", process.env.CARD_NUMBER, { delay: 50 });
         await delay(500);
 
         // Expiry
         await frame.waitForSelector("#cardExpiry", { visible: true });
-        await frame.type("#cardExpiry", process.env.CARD_EXPIRY, { delay: 10 });
+        await frame.type("#cardExpiry", process.env.CARD_EXPIRY, { delay: 50 });
         await delay(500);
 
         // CVV
         await frame.waitForSelector("#cvv2", { visible: true });
-        await frame.type("#cvv2", process.env.CARD_CVV, { delay: 10 });
+        await frame.type("#cvv2", process.env.CARD_CVV, { delay: 50 });
         await delay(500);
 
         console.log(chalk.green("Card details filled"));
@@ -192,7 +192,7 @@ async function runAutomation(page) {
             await delay(500)
 
             const inputs = await page.$$('.ant-input-outlined.input-form.form-control');
-            await inputs[1].type(randomMobile(), { delay: 10 }); // second input
+            await inputs[1].type(randomMobile(), { delay: 50 }); // second input
 
 
             console.log("number enter success")
