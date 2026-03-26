@@ -264,7 +264,10 @@ async function runAutomation(page) {
                 await ensureAtHome();
                 await registerusers(page)
                 console.log(chalk.bgGreen("[success]"), "user " + i + " register successfully")
-                await logout(page)
+                if(i != process.env.USER_REGISTRATION_COUNT){
+                      await logout(page)
+                }
+              
                 await delay(500)
             } catch (err) {
                 console.error(chalk.red("[Error for user " + i + "]"), err.message);
