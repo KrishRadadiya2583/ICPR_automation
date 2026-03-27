@@ -79,20 +79,20 @@ async function runAutomation(page) {
 
         // Card Number
         console.log(chalk.blue("card details fill start"));
-        await delay(1000);
+  
         await frame.waitForSelector("#ccnumber", { visible: true });
         await frame.type("#ccnumber", process.env.CARD_NUMBER, { delay: 50 });
-        await delay(500);
+    
 
         // Expiry
         await frame.waitForSelector("#cardExpiry", { visible: true });
         await frame.type("#cardExpiry", process.env.CARD_EXPIRY, { delay: 50 });
-        await delay(500);
+
 
         // CVV
         await frame.waitForSelector("#cvv2", { visible: true });
         await frame.type("#cvv2", process.env.CARD_CVV, { delay: 50 });
-        await delay(500);
+
 
         console.log(chalk.green("Card details filled"));
 
