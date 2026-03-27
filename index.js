@@ -19,8 +19,8 @@ function sleep(ms) {
             browser = await launchBrowser();
             const page = await browser.newPage();
 
-            page.setDefaultTimeout(120000);
-            page.setDefaultNavigationTimeout(120000);
+            page.setDefaultTimeout(90000);
+            page.setDefaultNavigationTimeout(90000);
 
             await runAutomation(page);
             console.log(chalk.green(`[✅ Success] Automation completed on attempt ${attempt}`));
@@ -39,9 +39,10 @@ function sleep(ms) {
             console.log(chalk.yellow(`[Retry] Waiting ${RETRY_DELAY_MS / 1000}s before next attempt...`));
             await sleep(RETRY_DELAY_MS);
         } finally {
-          
-                console.log(chalk.gray(" execution of auomation completed"));
-            
+            if (browser) {
+                await browser.close();
+                console.log(chalk.gray("[Cleanup] Browser closed"));
+            }
         }
     }
 })();
