@@ -80,19 +80,18 @@ async function runAutomation(page) {
         console.log(chalk.blue("card details fill start"));
   
         await frame.waitForSelector("#ccnumber", { visible: true });
-        await frame.type("#ccnumber", process.env.CARD_NUMBER, { delay: 50 });
+        await frame.type("#ccnumber", process.env.CARD_NUMBER, { delay: 10 });
     
-          await delay(process.env.COMMON_DELAY_ONCLICKS)
+    
 
         // Expiry
         await frame.waitForSelector("#cardExpiry", { visible: true });
-        await frame.type("#cardExpiry", process.env.CARD_EXPIRY, { delay: 50 });
+        await frame.type("#cardExpiry", process.env.CARD_EXPIRY, { delay: 10 });
 
-        await delay(process.env.COMMON_DELAY_ONCLICKS)
-
+       
         // CVV
         await frame.waitForSelector("#cvv2", { visible: true });
-        await frame.type("#cvv2", process.env.CARD_CVV, { delay: 50 });
+        await frame.type("#cvv2", process.env.CARD_CVV, { delay: 10 });
 
   await delay(process.env.COMMON_DELAY_ONCLICKS)
 
@@ -176,13 +175,18 @@ async function runAutomation(page) {
     }
 
     async function generateReportsAndUnlock(page) {
+        
         for (let i = 1; i <= process.env.REPORT_COUNT; i++) {
-
-            await page.waitForSelector('a[data-title="Search other Number"]', { visible: true })
 
             await delay(process.env.COMMON_DELAY_ONCLICKS)
 
-            await page.click("a[data-title='Search other Number']")
+
+            await page.waitForSelector('a[data-title="Search other Number"]', { visible: true, timeout: 30000 });
+
+
+            await delay(process.env.COMMON_DELAY_ONCLICKS)
+
+            await page.click('a[data-title="Search other Number"]')
 
             console.log("generate new report button click success")
 
@@ -202,14 +206,18 @@ async function runAutomation(page) {
             console.log("number enter success")
 
             // click on submit
-
+            await delay(process.env.COMMON_DELAY_ONCLICKS)
             await page.waitForSelector("#btnSubmit", { visible: true })
+
+            await delay(process.env.COMMON_DELAY_ONCLICKS)
 
             await page.click("#btnSubmit")
 
             console.log("submit button click success")
 
+        await page.waitForSelector('a[data-title="Search other Number"]', { visible: true, timeout: 60000 });
             console.log(chalk.bgGreen("report " + i + " generate  successfull"))
+            await delay(500)
         }
 
         if (process.env.UNLOCK_REPORT == "true") {
