@@ -16,8 +16,10 @@ function sleep(ms) {
         try {
             console.log(chalk.cyan(`[Retry] Attempt ${attempt}/${MAX_RETRIES}`));
 
-            browser = await launchBrowser();
-            const page = await browser.newPage();
+         browser = await launchBrowser();
+
+    const pages = await browser.pages();
+    const page = pages[0]; // use existing tab
 
             page.setDefaultTimeout(90000);
             page.setDefaultNavigationTimeout(90000);
@@ -39,10 +41,10 @@ function sleep(ms) {
             console.log(chalk.yellow(`[Retry] Waiting ${RETRY_DELAY_MS / 1000}s before next attempt...`));
             await sleep(RETRY_DELAY_MS);
         } finally {
-            if (browser) {
-                await browser.close();
-                console.log(chalk.gray("[Cleanup] Browser closed"));
-            }
+            // if (browser) {
+            //     await browser.close();
+            //     console.log(chalk.gray("[Cleanup] Browser closed"));
+            // }
         }
     }
 })();
