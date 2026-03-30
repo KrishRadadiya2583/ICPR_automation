@@ -1,14 +1,24 @@
+require('dotenv').config();
 const puppeteer = require("puppeteer-extra");
 
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 
 puppeteer.use(StealthPlugin());
 
+const isHeadless = process.env.PUPPETEER_HEADLESS === 'true';
+const startMaximized = process.env.PUPPETEER_START_MAXIMIZED === 'true';
+
+const defaultViewport =
+  process.env.PUPPETEER_DEFAULT_VIEWPORT === 'null'
+    ? null
+    : JSON.parse(process.env.PUPPETEER_DEFAULT_VIEWPORT);
+
+
 async function launchBrowser() {
     return await puppeteer.launch({
-        headless: false,
-        defaultViewport: null,
-        args: ["--start-maximized"],
+        headless: isHeadless,
+        defaultViewport: defaultViewport,
+        args:startMaximized ? ['--start-maximized'] : [],
     });
 }
 

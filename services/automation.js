@@ -4,7 +4,6 @@ const fs = require('fs')
 const delay = require("../utils/delay");
 const { randomMobile, randomEmail } = require("../utils/generator");
 
-
 async function runAutomation(page) {
     console.log(chalk.green("[START]"), "opning url in browser...");
 
@@ -83,16 +82,19 @@ async function runAutomation(page) {
         await frame.waitForSelector("#ccnumber", { visible: true });
         await frame.type("#ccnumber", process.env.CARD_NUMBER, { delay: 50 });
     
+          await delay(process.env.COMMON_DELAY_ONCLICKS)
 
         // Expiry
         await frame.waitForSelector("#cardExpiry", { visible: true });
         await frame.type("#cardExpiry", process.env.CARD_EXPIRY, { delay: 50 });
 
+        await delay(process.env.COMMON_DELAY_ONCLICKS)
 
         // CVV
         await frame.waitForSelector("#cvv2", { visible: true });
         await frame.type("#cvv2", process.env.CARD_CVV, { delay: 50 });
 
+  await delay(process.env.COMMON_DELAY_ONCLICKS)
 
         console.log(chalk.green("Card details filled"));
 
@@ -105,15 +107,11 @@ async function runAutomation(page) {
             await page.click("#submit");
         }
 
-        console.log(chalk.magenta(" Payment Done"));
-
-        
-        console.log(chalk.green("[success]"), "user register successfully")
 
 
 
         // click on continue to open dashboard
-        await delay(500)
+        await delay(process.env.COMMON_DELAY_ONCLICKS)
 
         await page.waitForSelector("button.continue-btn", { visible: true });
         await page.click("button.continue-btn");
@@ -145,10 +143,16 @@ async function runAutomation(page) {
 
 
         await page.waitForSelector(".ant-modal-close-x", { visible: true })
-        await delay(500)
+        await delay(process.env.COMMON_DELAY_ONCLICKS)
         await page.click(".ant-modal-close-x")
 
         console.log(chalk.bgYellow("report close button click success"))
+
+        
+        console.log(chalk.magenta(" Payment Done"));
+
+        
+        console.log(chalk.green("[success]"), "user register successfully")
 
         if(process.env.USER_REGISTRATION_COUNT>1){
         fs.appendFileSync("users.txt",`user email:${email}\n`)
@@ -158,10 +162,10 @@ async function runAutomation(page) {
     async function logout(page) {
 
         await page.waitForSelector(".ant-dropdown-trigger", { visible: true })
-        await delay(500)
+        await delay(process.env.COMMON_DELAY_ONCLICKS)
         await page.click(".ant-dropdown-trigger")
 
-        await delay(500)
+        await delay(process.env.COMMON_DELAY_ONCLICKS)
 
         const inputs = await page.$$('.mobile_menu_option');
         await inputs[5].click();
@@ -176,7 +180,7 @@ async function runAutomation(page) {
 
             await page.waitForSelector('a[data-title="Search other Number"]', { visible: true })
 
-            await delay(1000)
+            await delay(process.env.COMMON_DELAY_ONCLICKS)
 
             await page.click("a[data-title='Search other Number']")
 
@@ -185,11 +189,11 @@ async function runAutomation(page) {
 
             // input number for new report
 
-            await delay(1000)
+            await delay(process.env.COMMON_DELAY_ONCLICKS)
 
             await page.waitForSelector('.ant-input-outlined.input-form.form-control', { visible: true });
 
-            await delay(500)
+            await delay(process.env.COMMON_DELAY_ONCLICKS)
 
             const inputs = await page.$$('.ant-input-outlined.input-form.form-control');
             await inputs[1].type(randomMobile(), { delay: 50 }); // second input
@@ -212,10 +216,10 @@ async function runAutomation(page) {
 
             // unlock latest report 
 
-            await delay(500)
+            await delay(process.env.COMMON_DELAY_ONCLICKS)
             await page.waitForSelector(".UnlockFullReport", { visible: true })
 
-            await delay(500)
+            await delay(process.env.COMMON_DELAY_ONCLICKS)
 
             await page.click(".UnlockFullReport")
 
@@ -223,7 +227,7 @@ async function runAutomation(page) {
 
             await page.waitForSelector(".vc_btn3-inline", { visible: true })
 
-            await delay(500)
+            await delay(process.env.COMMON_DELAY_ONCLICKS)
 
             await page.click(".vc_btn3-inline")
 
@@ -240,7 +244,7 @@ async function runAutomation(page) {
 
         await page.waitForSelector(".accuracy__transparent_btn", { visible: true })
 
-        await delay(500)
+        await delay(process.env.COMMON_DELAY_ONCLICKS)
 
         await page.click(".accuracy__transparent_btn")
 
@@ -250,7 +254,7 @@ async function runAutomation(page) {
 
         await page.waitForSelector(".report__popup_pay_btn", { visible: true })
 
-        await delay(500)
+        await delay(process.env.COMMON_DELAY_ONCLICKS)
 
         await page.click(".report__popup_pay_btn")
 
@@ -268,7 +272,7 @@ async function runAutomation(page) {
                       await logout(page)
                 }
               
-                await delay(500)
+                await delay(process.env.COMMON_DELAY_ONCLICKS)
             } catch (err) {
                 console.error(chalk.red("[Error for user " + i + "]"), err.message);
             }
