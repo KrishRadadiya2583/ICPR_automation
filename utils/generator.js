@@ -6,7 +6,7 @@ function randomEmail() {
     const randomStr = Math.random().toString(36).substring(2, 8);
     const number = Date.now().toString().slice(-4);
 
-    return `user${randomStr}${number}@yopmail.com`;
+    return `sub_discounted_full_access-${number}-${randomStr}@yopmail.com`;;
 }
 
 module.exports = { randomMobile, randomEmail };
