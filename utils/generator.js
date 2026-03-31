@@ -1,5 +1,10 @@
 function randomMobile() {
-    return Math.floor(1000000000 + Math.random() * 9000000000).toString();
+     const firstDigit = Math.floor(Math.random() * 4) + 6; // 6–9
+    const remaining = Math.floor(Math.random() * 1000000000)
+        .toString()
+        .padStart(9, '0');
+
+    return firstDigit + remaining;
 }
 
 function randomEmail() {
