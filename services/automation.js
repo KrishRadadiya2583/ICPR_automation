@@ -209,9 +209,10 @@ await delay(process.env.COMMON_DELAY_ONCLICKS)
         
         console.log(chalk.green("[success]"), "user register successfully")
 
-        if(process.env.USER_REGISTRATION_COUNT>1){
-        fs.writeFileSync("users.txt",`user email:${email}\n`)
-        }
+
+             
+     fs.appendFileSync('users.txt', `user email:${email} \n`);
+       
     }
 
     async function logout(page) {
@@ -336,6 +337,7 @@ await delay(process.env.COMMON_DELAY_ONCLICKS)
     }
 
     if (process.env.USER_REGISTRATION_COUNT > 1) {
+        fs.writeFileSync("users.txt", ""); // Clear file before appending new users
         for (let i = 1; i <= process.env.USER_REGISTRATION_COUNT; i++) {
             try {
                 await ensureAtHome();
@@ -352,6 +354,7 @@ await delay(process.env.COMMON_DELAY_ONCLICKS)
         }
     } else {
         try {
+            fs.writeFileSync("users.txt", ""); // Clear file before appending new user
             await registerusers(page)
             await generateReportsAndUnlock(page)
         } catch (err) {

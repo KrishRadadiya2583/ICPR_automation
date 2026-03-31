@@ -2,8 +2,8 @@ const chalk = require("chalk")
 const { launchBrowser } = require("./config/puppeteer");
 const { runAutomation } = require("./services/automation");
 
-const MAX_RETRIES = 5;
-const RETRY_DELAY_MS = 5000;
+const MAX_RETRIES = process.env.MAX_RETRIES ? parseInt(process.env.MAX_RETRIES) : 3;
+const RETRY_DELAY_MS = process.env.RETRY_DELAY_MS ? parseInt(process.env.RETRY_DELAY_MS) : 5000;
 
 function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -41,10 +41,10 @@ function sleep(ms) {
             console.log(chalk.yellow(`[Retry] Waiting ${RETRY_DELAY_MS / 1000}s before next attempt...`));
             await sleep(RETRY_DELAY_MS);
         } finally {
-            // if (browser) {
-            //     await browser.close();
-            //     console.log(chalk.gray("[Cleanup] Browser closed"));
-            // }
+            if (browser) {
+                await browser.close();
+                console.log(chalk.gray("[Cleanup] Browser closed"));
+            }
         }
     }
 })();
