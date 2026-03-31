@@ -8,15 +8,50 @@ async function runAutomation(page) {
     console.log(chalk.green("[START]"), "opning url in browser...");
 
     async function ensureAtHome() {
-        const targetUrl = process.env.WEBSITE_URL.trim();
-        await page.goto(targetUrl, { waitUntil: "load" });
+
+        if(process.env.ENABLE_DISCOUNTED_FULL_FLOW === "true") {
+
+        const targetUrl = process.env.WEBSITE_URL.trim()+"track";
+        console.log(chalk.bgCyanBright("discounted full access flow enabled"));
+        console.log(chalk.blue("Navigating to:"), targetUrl);
+         await page.goto(targetUrl, { waitUntil: "load" });
     }
+    else if(process.env.ENABLE_PRO_ACCESS_FLOW === "true"){
+
+        const targetUrl = process.env.WEBSITE_URL.trim()+"tracking";
+        console.log(chalk.bgCyanBright("pro access flow enabled"));
+        console.log(chalk.blue("Navigating to:"), targetUrl);
+         await page.goto(targetUrl, { waitUntil: "load" });
+    }
+    else if(process.env.ENABLE_STANDARD_FLOW === "true"){
+
+        const targetUrl = process.env.WEBSITE_URL.trim()+"track";
+        console.log(chalk.bgCyanBright("standard access flow enabled"));
+        console.log(chalk.blue("Navigating to:"), targetUrl);
+         await page.goto(targetUrl, { waitUntil: "load" });
+    }
+    else if(process.env.ENABLE_PAID_PLATFORM_ACCESS === "true"){
+
+        const targetUrl = process.env.WEBSITE_URL.trim()+"tracking";
+        console.log(chalk.bgCyanBright("paid platform access flow enabled"));
+        console.log(chalk.blue("Navigating to:"), targetUrl);
+         await page.goto(targetUrl, { waitUntil: "load" });
+    }
+    else{
+
+        const targetUrl = process.env.WEBSITE_URL.trim();
+        console.log(chalk.bgCyanBright("default access flow enabled"));
+        console.log(chalk.blue("Navigating to:"), targetUrl);
+         await page.goto(targetUrl, { waitUntil: "load" });
+    }
+    
+}
 
     async function findPaymentFrame() {
         const allowed = ["stripe", "payment", "checkout"];
 
         const start = Date.now();
-        while (Date.now() - start < 15000) {
+        while (Date.now() - start < 60000) {
             const frame = page.frames().find((f) => {
                 const u = f.url();
                 if (!u) return false;
@@ -24,7 +59,7 @@ async function runAutomation(page) {
             });
 
             if (frame) return frame;
-            await delay(300);
+            await delay(500);
         }
 
         throw new Error("Payment iframe not found");
@@ -43,12 +78,23 @@ async function runAutomation(page) {
         await page.type("input[placeholder='Enter a phone number']", mobile, { delay: 50 });
 
         // ===== STEP 2: SEARCH =====
+
+        if(process.env.ENABLE_DISCOUNTED_FULL_FLOW === "true" || process.env.ENABLE_STANDARD_FLOW === "true") {
+
         await Promise.all([
             page.waitForNavigation(),
             page.click("button[type='submit']")
         ]);
+         console.log(chalk.green("Search submitted"));
+    }
+    else{
+        await page.waitForSelector(".span-text", { visible: true });
 
-        console.log(chalk.green("Search submitted"));
+        await page.click(".span-text")
+         console.log(chalk.green("Search submitted"));
+    }
+
+       
 
         // ===== STEP 3: EMAIL =====
 
@@ -69,31 +115,41 @@ async function runAutomation(page) {
         // ===== STEP 5: HANDLE IFRAME =====
         console.log(chalk.yellow("Waiting for payment iframe..."));
 
-        await page.waitForSelector("iframe", { visible: true, timeout: 120000 });
+
+
+    
+         await page.waitForSelector("iframe", { visible: true, timeout: 60000 });
 
         const frame = await findPaymentFrame();
+
+       
 
         console.log(chalk.green("Payment frame found"));
         console.log(chalk.blue("Frame URL:"), frame.url());
 
         // Card Number
         console.log(chalk.blue("card details fill start"));
-  
+    
         await frame.waitForSelector("#ccnumber", { visible: true });
-        await frame.type("#ccnumber", process.env.CARD_NUMBER, { delay: 10 });
+            await frame.click("#ccnumber", { clickCount: 3 });
+        await frame.type("#ccnumber", process.env.CARD_NUMBER, { delay: 20 });
     
-    
+    await delay(process.env.COMMON_DELAY_ONCLICKS)
 
         // Expiry
         await frame.waitForSelector("#cardExpiry", { visible: true });
-        await frame.type("#cardExpiry", process.env.CARD_EXPIRY, { delay: 10 });
+        await frame.click("#cardExpiry", { clickCount: 3 });
+        await frame.type("#cardExpiry", process.env.CARD_EXPIRY, { delay: 20 });
 
-       
+       await delay(process.env.COMMON_DELAY_ONCLICKS)
         // CVV
         await frame.waitForSelector("#cvv2", { visible: true });
-        await frame.type("#cvv2", process.env.CARD_CVV, { delay: 10 });
+        await frame.click("#cvv2", { clickCount: 3 });
+        await frame.type("#cvv2", process.env.CARD_CVV, { delay: 20 });
 
-  await delay(process.env.COMMON_DELAY_ONCLICKS)
+
+
+await delay(process.env.COMMON_DELAY_ONCLICKS)
 
         console.log(chalk.green("Card details filled"));
 
@@ -154,7 +210,7 @@ async function runAutomation(page) {
         console.log(chalk.green("[success]"), "user register successfully")
 
         if(process.env.USER_REGISTRATION_COUNT>1){
-        fs.appendFileSync("users.txt",`user email:${email}\n`)
+        fs.writeFileSync("users.txt",`user email:${email}\n`)
         }
     }
 
@@ -178,9 +234,16 @@ async function runAutomation(page) {
         
         for (let i = 1; i <= process.env.REPORT_COUNT; i++) {
 
+            if(process.env.ENABLE_CREATE_REPORT != "true"){
+                console.log(chalk.bgYellowBright("report generation skipped"))
+                break;
+            }
+            else{
+
             await delay(process.env.COMMON_DELAY_ONCLICKS)
 
 
+            
             await page.waitForSelector('a[data-title="Search other Number"]', { visible: true, timeout: 30000 });
 
 
@@ -218,6 +281,8 @@ async function runAutomation(page) {
         await page.waitForSelector('a[data-title="Search other Number"]', { visible: true, timeout: 60000 });
             console.log(chalk.bgGreen("report " + i + " generate  successfull"))
             await delay(500)
+
+            }
         }
 
         if (process.env.UNLOCK_REPORT == "true") {
