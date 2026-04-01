@@ -1,3 +1,4 @@
+require('dotenv').config();
 const chalk = require("chalk")
 const { launchBrowser } = require("./config/puppeteer");
 const { runAutomation } = require("./services/automation");
@@ -41,10 +42,17 @@ function sleep(ms) {
             console.log(chalk.yellow(`[Retry] Waiting ${RETRY_DELAY_MS / 1000}s before next attempt...`));
             await sleep(RETRY_DELAY_MS);
         } finally {
-            if (browser) {
+
+            if (process.env.BROWSER_CLOSE_ON_COMPLETION == "true") {
+                if (browser) {
                 await browser.close();
                 console.log(chalk.gray("[Cleanup] Browser closed"));
             }
+            else{
+                console.log(chalk.gray("browser close on completion is set to false, keeping browser open for debugging"));
+            }
+            }
+            
         }
     }
 })();
