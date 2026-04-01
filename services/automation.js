@@ -1,4 +1,4 @@
-require('dotenv').config();
+
 const chalk = require("chalk");
 const fs = require('fs')
 const delay = require("../utils/delay");
@@ -129,23 +129,32 @@ async function runAutomation(page) {
 
         // Card Number
         console.log(chalk.blue("card details fill start"));
-    
-        await frame.waitForSelector("#ccnumber", { visible: true });
+
+    await delay(100)
+        await frame.waitForSelector("#ccnumber", { visible: true});
             await frame.click("#ccnumber", { clickCount: 3 });
-        await frame.type("#ccnumber", process.env.CARD_NUMBER, { delay: 20 });
+            console.log(chalk.blue(" card number typing started."));
+        await frame.type("#ccnumber", process.env.CARD_NUMBER);
+        console.log(chalk.blue(" card number typing completed."));
+
+
     
-    await delay(process.env.COMMON_DELAY_ONCLICKS)
+    await delay(50)
 
         // Expiry
-        await frame.waitForSelector("#cardExpiry", { visible: true });
+        await frame.waitForSelector("#cardExpiry", { visible: true});
         await frame.click("#cardExpiry", { clickCount: 3 });
-        await frame.type("#cardExpiry", process.env.CARD_EXPIRY, { delay: 20 });
+        console.log(chalk.blue(" card expiry typing started."));
+        await frame.type("#cardExpiry", process.env.CARD_EXPIRY);
+        console.log(chalk.blue(" card expiry typing completed."));
 
-       await delay(process.env.COMMON_DELAY_ONCLICKS)
+       await delay(50)
         // CVV
-        await frame.waitForSelector("#cvv2", { visible: true });
+        await frame.waitForSelector("#cvv2", { visible: true});
         await frame.click("#cvv2", { clickCount: 3 });
-        await frame.type("#cvv2", process.env.CARD_CVV, { delay: 20 });
+        console.log(chalk.blue(" card cvv typing started."));
+        await frame.type("#cvv2", process.env.CARD_CVV);
+        console.log(chalk.blue(" card cvv typing completed."));
 
 
 
@@ -337,7 +346,13 @@ await delay(process.env.COMMON_DELAY_ONCLICKS)
     }
 
     if (process.env.USER_REGISTRATION_COUNT > 1) {
-        fs.writeFileSync("users.txt", ""); // Clear file before appending new users
+          if (fs.existsSync("users.txt")) {
+    fs.unlinkSync("users.txt");
+    console.log("users.txt deleted");
+} else {
+    console.log("users.txt does not exist");
+}
+        // Clear file before appending new users
         for (let i = 1; i <= process.env.USER_REGISTRATION_COUNT; i++) {
             try {
                 await ensureAtHome();
@@ -354,7 +369,13 @@ await delay(process.env.COMMON_DELAY_ONCLICKS)
         }
     } else {
         try {
-            fs.writeFileSync("users.txt", ""); // Clear file before appending new user
+            if (fs.existsSync("users.txt")) {
+    fs.unlinkSync("users.txt");
+    console.log("users.txt deleted");
+} else {
+    console.log("users.txt does not exist");
+}
+          // Clear file before appending new user
             await registerusers(page)
             await generateReportsAndUnlock(page)
         } catch (err) {
