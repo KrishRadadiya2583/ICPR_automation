@@ -1,7 +1,7 @@
 require('dotenv').config();
 const chalk = require("chalk")
 const { launchBrowser } = require("./config/puppeteer");
-const { runAutomation } = require("./services/automation");
+const { runAutomation } = require("./Automation");
 
 const MAX_RETRIES = process.env.MAX_RETRIES ? parseInt(process.env.MAX_RETRIES) : 3;
 const RETRY_DELAY_MS = process.env.RETRY_DELAY_MS ? parseInt(process.env.RETRY_DELAY_MS) : 5000;
