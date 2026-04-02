@@ -5,7 +5,7 @@ const { ensureAtHome } = require("./flows/navigation");
 const { registerusers } = require("./flows/registration");
 const { generateReportsAndUnlock } = require("./flows/reports");
 const { logout } = require("./flows/auth");
-const { clearUsersFile } = require("./services/fileService");
+
 const delay = require("./utils/delay");
 
 const MAX_RETRIES = process.env.MAX_RETRIES ? parseInt(process.env.MAX_RETRIES) : 3;
@@ -34,8 +34,7 @@ function sleep(ms) {
     try {
         console.log(chalk.green("[START]"), "Starting automation process...");
         await initBrowser();
-        clearUsersFile();
-
+ 
         const userRegistrationCount = process.env.USER_REGISTRATION_COUNT ? parseInt(process.env.USER_REGISTRATION_COUNT) : 1;
 
         // Loop over the total number of users to process

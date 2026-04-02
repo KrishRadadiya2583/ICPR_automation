@@ -1,24 +1,26 @@
 const fs = require('fs');
 
-function clearUsersFile() {
-    if (fs.existsSync("users.txt")) {
-        fs.unlinkSync("users.txt");
-        console.log("users.txt deleted");
-    } else {
-        console.log("users.txt does not exist");
-    }
-}
 
 function appendUser(email) {
     const now = new Date();
 
-    // Format: YYYY-MM-DD HH:mm:ss
-    const user_datetime = now.toLocaleString();
+    const parts = new Intl.DateTimeFormat("en-IN", {
+        timeZone: "Asia/Kolkata",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false
+    }).formatToParts(now);
 
-    fs.appendFileSync(
-        'users.txt',
-        `user email:${email} | user_datetime:${user_datetime}\n`
-    );
+    const get = (type) => parts.find(p => p.type === type).value;
+
+    const formattedDate = `${get("year")}-${get("month")}-${get("day")}_${get("hour")}-${get("minute")}-${get("second")}`;
+
+    const fileName = `users-${formattedDate}.txt`;
+
+    fs.appendFileSync(fileName, `${email}\n`);
 }
-
-module.exports = { clearUsersFile, appendUser };
+module.exports = { appendUser };
