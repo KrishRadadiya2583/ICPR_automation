@@ -58,9 +58,9 @@ function sleep(ms) {
 
                         await generateReportsAndUnlock(page);
 
-                        // if (process.env.DOWNLOAD_PDF === "true") {
-                        //      await downloadPDF(page);
-                        //  }
+                        if (process.env.DOWNLOAD_PDF === "true") {
+                             await downloadPDF(page);
+                         }
 
                     } else if (i != userRegistrationCount) {
                         await logout(page);
