@@ -3,31 +3,152 @@
 This project is a robust browser automation system built using Node.js and Puppeteer, designed to handle user registration flows, reporting, and session management with retry logic and fault tolerance.
 
 📌 Features
-🔁 Retry Mechanism for failed automation steps
-🌐 Automated Browser Control using Puppeteer
-👤 User Registration Flow Automation
+🔁 Retry Mechanism – Automatically retries failed steps with configurable limits
+🌐 Browser Automation – Full control using Puppeteer
+👤 User Registration Automation – Handles bulk or single user flows
 📊 Report Generation & Unlock Flow
-🔐 Session Handling (Login/Logout)
-📁 User Data File Management
-⚙️ Fully configurable via .env
+🔐 Session Management – Login, logout, and state handling
+📁 User Data Management – Organized data handling
+⚙️ Environment-based Configuration via .env
+🧩 Modular Architecture – Easily extendable flows
 
 
 #  🔄 Workflow Overview
-Launch browser
-Clear previous user data
-Loop through user registrations:
-Navigate to home
-Register user
-Generate report (if single user)
-Logout (if multiple users)
-Retry on failure (with browser restart)
-Close browser (based on config)
+1. Launch Browser
+2. Clear Previous User Data
+3. Loop through Users:
+    ├── Navigate to Website
+    ├── Register User
+    ├── Generate Report (if enabled)
+    ├── Unlock Report (if enabled)
+    └── Logout (if multiple users)
+4. Retry on Failure (with browser restart)
+5. Close Browser (based on config)
 
 
 # 🧠 Retry Logic
 Each user flow retries up to MAX_RETRIES
 Delay between retries: RETRY_DELAY_MS
 Browser is restarted on failure to avoid corrupted state
+
+
+
+# ===============================
+# 🌐 WEBSITE CONFIGURATION  THROUGH .ENV FILE
+# ===============================
+
+WEBSITE_URL=https://your-website.com/
+
+# ===============================
+# 🧠 PUPPETEER SETTINGS
+# ===============================
+
+# boolean values: true or false for headless
+PUPPETEER_HEADLESS= false
+
+# boolean values: true or false for start maximized
+PUPPETEER_START_MAXIMIZED=true/false
+
+# viewport settings: null or specify width and height like {width: 1280, height: 800}
+PUPPETEER_DEFAULT_VIEWPORT=null
+
+# ===============================
+# 💳 CARD DETAILS
+# ===============================
+
+# Use valid card details for successful transactions. valid 16 digit card number.
+CARD_NUMBER=0000000000000000
+
+# Use valid expiry date in MM/YY format. 
+CARD_EXPIRY=mm/yy
+
+# Use valid CVV code (3 or 4 digits).
+CARD_CVV=000
+
+# ===============================
+# 📊 REPORT GENERATION
+# ===============================
+
+# Number of reports to generate (integer value)
+REPORT_COUNT=1 
+
+# boolean values: true or false to enable or disable report creation
+ENABLE_CREATE_REPORT = false 
+
+
+# ===============================
+# 📧 HTML PAGE FOR USER REGISTRATION DETAILS
+# ===============================
+# boolean value for html page generate for user registration details
+HTML_PAGE_CREATION_FOR_USER_DETAILS= true
+
+
+# ===============================
+# 📕 PDF SUBSCRIPTION SETTINGS
+# ===============================
+# boolean value for pdf download or take pdf SUBSCRIPTION
+DOWNLOAD_PDF= false
+
+# ===============================
+# ⏱️ AUTOMATION SETTINGS
+# ===============================
+# Retry configuration
+MAX_RETRIES=5
+
+# Delay between retries in milliseconds
+RETRY_DELAY_MS=5000
+
+
+
+# Timeout settings (in milliseconds)
+
+# page load timeout for navigation and waiting for elements(integer value in miliseconds)
+PAGE_TIMEOUT=00000 
+
+# timeout for waiting for iframes to load and be available (integer value in miliseconds)
+IFRAME_TIMEOUT=00000 
+
+# timeout for report generation and unlocking (integer value in miliseconds)
+REPORT_TIMEOUT=00000 
+
+# Delay settings (in milliseconds)
+
+# delay after clicks to allow page to respond (integer value in miliseconds)
+COMMON_DELAY_ONCLICKS=000
+
+# delay between keystrokes when typing (integer value in miliseconds)
+TYPING_DELAY=50
+
+# ===============================
+# 👤 USER SETTINGS
+# ===============================
+# Number of users to register
+USER_REGISTRATION_COUNT=1
+
+# ===============================
+# 🔓 REPORT UNLOCK SETTINGS
+# ===============================
+# boolean values: true or false to enable or disable report unlocking
+UNLOCK_REPORT=false
+
+
+# ===============================
+# ▶️ + ⚙️ EXECUTION FLOW  SETTINGS
+# ===============================
+
+# boolean values: true or false to enable or disable specific execution flows
+ENABLE_DISCOUNTED_FULL_FLOW = true
+ENABLE_PRO_ACCESS_FLOW = false
+ENABLE_STANDARD_FLOW = false
+ENABLE_PAID_PLATFORM_ACCESS = false
+
+
+# ===============================
+# 🌐 BROWSER SETTINGS
+# ===============================
+# boolean values: true or false to determine if browser should close after completion
+BROWSER_CLOSE_ON_COMPLETION = false/true
+
 
 
 🛠️ Customization

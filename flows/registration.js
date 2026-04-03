@@ -48,11 +48,11 @@ async function registerusers(page) {
     console.log(chalk.green("[success]"), "user register successfully");
 
 
-console.log(chalk.yellow("Fetching password for:"), email,"STARTED");
+if(process.env.HTML_PAGE_CREATION_FOR_USER_DETAILS === "true") {
+    console.log(chalk.yellow("Fetching password for:"), email,"STARTED");
  
-  await delay(process.env.COMMON_DELAY_ONCLICKS); // wait for file write
-
-    const result = await fetchPassword(page, email);
+    await delay(process.env.COMMON_DELAY_ONCLICKS); // wait for file write
+     const result = await fetchPassword(page, email);
 
     await delay(process.env.COMMON_DELAY_ONCLICKS);
 
@@ -64,15 +64,16 @@ console.log(chalk.yellow("Fetching password for:"), email,"STARTED");
   
 await delay(1000)
     
-    console.log(chalk.yellow("User added to report:"), users);
+    console.log(users);
 
 
-if (users.length == parseInt(process.env.USER_REGISTRATION_COUNT || "1")) {
+if (users.length == parseInt(process.env.USER_REGISTRATION_COUNT)) {
     console.log(chalk.green("[Report]"), "Generating HTML report for all users...");
     console.log(chalk.green("[Report]"), "Users to include in report:", users.length);
     await generateHTML(users);
 }
 
+}
 
 
     appendUser(email);
