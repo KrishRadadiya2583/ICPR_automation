@@ -1,8 +1,14 @@
+const express = require("express");
 const chalk = require("chalk");
 const { randomMobile, randomEmail } = require("../utils/generator");
 const { handlePayment } = require("./payment");
 const { appendUser } = require("../services/fileService");
+const {generateHTML} = require("./htmlgenerator");
+const { fetchPassword} = require("./yopmailpasswordfetcher");
+const delay = require("../utils/delay");
 
+
+const users =[];
 async function registerusers(page) {
     const mobile = randomMobile();
     console.log(chalk.blue("Mobile:"), mobile);
@@ -40,6 +46,34 @@ async function registerusers(page) {
     await handlePayment(page);
 
     console.log(chalk.green("[success]"), "user register successfully");
+
+
+console.log(chalk.yellow("Fetching password for:"), email,"STARTED");
+ 
+  await delay(process.env.COMMON_DELAY_ONCLICKS); // wait for file write
+
+    const result = await fetchPassword(page, email);
+
+    await delay(process.env.COMMON_DELAY_ONCLICKS);
+
+    console.log(chalk.yellow("Fetching password for:"), email,"COMPLETED");
+    console.log("Result:", result);
+
+
+    users.push({ email:email, password: result });
+  
+await delay(1000)
+    
+    console.log(chalk.yellow("User added to report:"), users);
+
+
+if (users.length == parseInt(process.env.USER_REGISTRATION_COUNT || "1")) {
+    console.log(chalk.green("[Report]"), "Generating HTML report for all users...");
+    console.log(chalk.green("[Report]"), "Users to include in report:", users.length);
+    await generateHTML(users);
+}
+
+
 
     appendUser(email);
 }
