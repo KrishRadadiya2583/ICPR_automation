@@ -70,7 +70,17 @@ await delay(1000)
 if (users.length == parseInt(process.env.USER_REGISTRATION_COUNT)) {
     console.log(chalk.green("[Report]"), "Generating HTML report for all users...");
     console.log(chalk.green("[Report]"), "Users to include in report:", users.length);
-    await generateHTML(users);
+    const htmlFilePath = await generateHTML(users);
+    
+    if (process.env.OPEN_HTML_PAGES === "true") {
+        console.log(chalk.green("[Report]"), "Opening HTML page...");
+        try {
+            const open = (await import('open')).default;
+            await open(htmlFilePath);
+        } catch (err) {
+            console.error(chalk.red("[Error]"), "Failed to open HTML page:", err);
+        }
+    }
 }
 
 }
