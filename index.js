@@ -5,7 +5,7 @@ const { ensureAtHome } = require("./flows/navigation");
 const { registerusers } = require("./flows/registration");
 const { generateReportsAndUnlock } = require("./flows/reports");
 const { logout } = require("./flows/auth");
-
+ const { downloadPDF } = require("./flows/pdf_subscription");
 const delay = require("./utils/delay");
 
 const MAX_RETRIES = process.env.MAX_RETRIES ? parseInt(process.env.MAX_RETRIES) : 3;
@@ -34,7 +34,8 @@ function sleep(ms) {
     try {
         console.log(chalk.green("[START]"), "Starting automation process...");
         await initBrowser();
- 
+
+
         const userRegistrationCount = process.env.USER_REGISTRATION_COUNT ? parseInt(process.env.USER_REGISTRATION_COUNT) : 1;
 
         // Loop over the total number of users to process
@@ -49,11 +50,18 @@ function sleep(ms) {
 
                     await ensureAtHome(page);
                     await registerusers(page);
+
                     
                     console.log(chalk.bgGreen("[success]"), "user " + i + " register successfully");
                     
                     if (userRegistrationCount === 1) {
+
                         await generateReportsAndUnlock(page);
+
+                        // if (process.env.DOWNLOAD_PDF === "true") {
+                        //      await downloadPDF(page);
+                        //  }
+
                     } else if (i != userRegistrationCount) {
                         await logout(page);
                     }
