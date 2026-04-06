@@ -1,182 +1,187 @@
- # 🚀 Automation Bot (Puppeteer + Node.js)
+# ICPR Automation
 
-This project is a robust browser automation system built using Node.js and Puppeteer, designed to handle user registration flows, reporting, and session management with retry logic and fault tolerance.
+Browser automation tool built with Node.js and Puppeteer for handling user registration flows, payment processing, report generation, and session management with built-in retry logic.
 
-📌 Features
-🔁 Retry Mechanism – Automatically retries failed steps with configurable limits
-🌐 Browser Automation – Full control using Puppeteer
-👤 User Registration Automation – Handles bulk or single user flows
-📊 Report Generation & Unlock Flow
-🔐 Session Management – Login, logout, and state handling
-📁 User Data Management – Organized data handling
-⚙️ Environment-based Configuration via .env
-🧩 Modular Architecture – Easily extendable flows
+## Features
 
+- **Retry Mechanism** -- Automatically retries failed steps with configurable limits and browser restart
+- **Browser Automation** -- Full control using Puppeteer with stealth plugin for anti-bot detection
+- **User Registration** -- Handles bulk or single user registration flows
+- **Report Generation** -- Create and unlock reports after registration
+- **PDF Subscription** -- Download PDF subscriptions for registered users
+- **HTML Reports** -- Generate HTML pages with user credentials for easy reference
+- **Environment-based Config** -- All settings controlled via `.env` file
+- **Modular Architecture** -- Easily extendable with new flows
 
-#  🔄 Workflow Overview
+## Prerequisites
+
+- **Node.js** 18 or higher
+- **pnpm**   npm install -g pnpm
+- ~500MB disk space for Chromium (downloaded automatically during install)
+
+## Quick Start
+
+1. **Clone the repository**
+
+   ```bash
+   git clone <your-repo-url>
+   cd icpr-automation
+   ```
+
+2. **Install dependencies** (also downloads Chromium automatically)
+
+   ```bash
+   pnpm install
+   ```
+
+3. **Create your environment file**
+
+   ```bash
+   cp .env.example .env
+   ```
+
+4. **Configure `.env`** -- Open `.env` and set at minimum:
+   - `WEBSITE_URL` -- target website URL
+   - `CARD_NUMBER`, `CARD_EXPIRY`, `CARD_CVV` -- payment card details
+   - Enable exactly one execution flow (`ENABLE_DISCOUNTED_FULL_FLOW`, etc.)
+
+5. **Run the automation**
+
+   ```bash
+   npm start
+   ```
+
+## Configuration
+
+All configuration is managed through the `.env` file. See `.env.example` for the full list with descriptions.
+
+### Key Settings
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `WEBSITE_URL` | Target website URL | *(required)* |
+| `CARD_NUMBER` | 16-digit payment card number | *(required)* |
+| `CARD_EXPIRY` | Card expiry in MM/YY format | *(required)* |
+| `CARD_CVV` | 3-4 digit CVV code | *(required)* |
+| `USER_REGISTRATION_COUNT` | Number of users to register | `1` |
+| `PUPPETEER_HEADLESS` | Run browser without UI | `false` |
+
+### Execution Flows
+
+Enable **exactly one** of these flows per run:
+
+| Flow | Description |
+|------|-------------|
+| `ENABLE_DISCOUNTED_FULL_FLOW` | Discounted registration flow |
+| `ENABLE_PRO_ACCESS_FLOW` | Pro access registration flow |
+| `ENABLE_STANDARD_FLOW` | Standard registration flow |
+| `ENABLE_PAID_PLATFORM_ACCESS` | Paid platform access flow |
+
+### Optional Features
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `ENABLE_CREATE_REPORT` | Generate reports after registration | `false` |
+| `REPORT_COUNT` | Number of reports to generate | `1` |
+| `UNLOCK_REPORT` | Unlock the latest report | `false` |
+| `DOWNLOAD_PDF` | Download PDF subscription | `false` |
+| `HTML_PAGE_CREATION_FOR_USER_DETAILS` | Generate HTML page with user credentials | `false` |
+| `OPEN_HTML_PAGES` | Auto-open generated HTML pages | `true` |
+
+### Timing & Retry
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `PAGE_TIMEOUT` | Page load timeout (ms) | `90000` |
+| `IFRAME_TIMEOUT` | Iframe load timeout (ms) | `120000` |
+| `REPORT_TIMEOUT` | Report generation timeout (ms) | `60000` |
+| `COMMON_DELAY_ONCLICKS` | Delay after clicks (ms) | `200` |
+| `TYPING_DELAY` | Delay between keystrokes (ms) | `50` |
+| `CLICK_DELAY_MS` | Click delay in PDF flow (ms) | `200` |
+| `MAX_RETRIES` | Max retry attempts per user | `3` |
+| `RETRY_DELAY_MS` | Delay between retries (ms) | `5000` |
+
+## Project Structure
+
+```
+icpr-automation/
+├── config/
+│   └── puppeteer.js          # Browser launch configuration
+├── core/
+│   └── frameHandler.js       # Iframe detection for payment
+├── flows/
+│   ├── auth.js               # Logout functionality
+│   ├── htmlgenerator.js      # HTML report generation
+│   ├── navigation.js         # Flow routing based on config
+│   ├── payment.js            # Card payment via iframe
+│   ├── pdf_subscription.js   # PDF download flow
+│   ├── registration.js       # User registration + password fetch
+│   ├── reports.js            # Report generation & unlock
+│   └── yopmailpasswordfetcher.js  # Password retrieval from Yopmail
+├── services/
+│   └── fileService.js        # Writes user emails to file
+├── utils/
+│   ├── delay.js              # Promise-based delay utility
+│   ├── generator.js          # Random mobile/email generation
+│   └── logger.js             # Colored console logging
+├── public/                   # Generated HTML output (created at runtime)
+├── index.js                  # Main entry point with retry logic
+├── .env.example              # Environment variable template
+├── package.json              # pnpm package file
+├── pnpm-lock.yaml            # pnpm lock file
+└── pnpm-workspace.yaml       # pnpm workspace file
+```
+
+## Workflow Overview
+
+```
 1. Launch Browser
-2. Clear Previous User Data
-3. Loop through Users:
-    ├── Navigate to Website
-    ├── Register User
-    ├── Generate Report (if enabled)
-    ├── Unlock Report (if enabled)
-    └── Logout (if multiple users)
-4. Retry on Failure (with browser restart)
-5. Close Browser (based on config)
-
-
-# 🧠 Retry Logic
-Each user flow retries up to MAX_RETRIES
-Delay between retries: RETRY_DELAY_MS
-Browser is restarted on failure to avoid corrupted state
-
-
-
-# ===============================
-# 🌐 WEBSITE CONFIGURATION  THROUGH .ENV FILE
-# ===============================
-
-WEBSITE_URL=https://your-website.com/
-
-# ===============================
-# 🧠 PUPPETEER SETTINGS
-# ===============================
-
-# boolean values: true or false for headless
-PUPPETEER_HEADLESS= false
-
-# boolean values: true or false for start maximized
-PUPPETEER_START_MAXIMIZED=true/false
-
-# viewport settings: null or specify width and height like {width: 1280, height: 800}
-PUPPETEER_DEFAULT_VIEWPORT=null
-
-# ===============================
-# 💳 CARD DETAILS
-# ===============================
-
-# Use valid card details for successful transactions. valid 16 digit card number.
-CARD_NUMBER=0000000000000000
-
-# Use valid expiry date in MM/YY format. 
-CARD_EXPIRY=mm/yy
-
-# Use valid CVV code (3 or 4 digits).
-CARD_CVV=000
-
-# ===============================
-# 📊 REPORT GENERATION
-# ===============================
-
-# Number of reports to generate (integer value)
-REPORT_COUNT=1 
-
-# boolean values: true or false to enable or disable report creation
-ENABLE_CREATE_REPORT = false 
-
-
-# ===============================
-# 📧 HTML PAGE FOR USER REGISTRATION DETAILS
-# ===============================
-# boolean value for html page generate for user registration details
-HTML_PAGE_CREATION_FOR_USER_DETAILS= true
-
-
-# ===============================
-# 📕 PDF SUBSCRIPTION SETTINGS
-# ===============================
-# boolean value for pdf download or take pdf SUBSCRIPTION
-DOWNLOAD_PDF= false
-
-# ===============================
-# ⏱️ AUTOMATION SETTINGS
-# ===============================
-# Retry configuration
-MAX_RETRIES=5
-
-# Delay between retries in milliseconds
-RETRY_DELAY_MS=5000
-
-
-
-# Timeout settings (in milliseconds)
-
-# page load timeout for navigation and waiting for elements(integer value in miliseconds)
-PAGE_TIMEOUT=00000 
-
-# timeout for waiting for iframes to load and be available (integer value in miliseconds)
-IFRAME_TIMEOUT=00000 
-
-# timeout for report generation and unlocking (integer value in miliseconds)
-REPORT_TIMEOUT=00000 
-
-# Delay settings (in milliseconds)
-
-# delay after clicks to allow page to respond (integer value in miliseconds)
-COMMON_DELAY_ONCLICKS=000
-
-# delay between keystrokes when typing (integer value in miliseconds)
-TYPING_DELAY=50
-
-# ===============================
-# 👤 USER SETTINGS
-# ===============================
-# Number of users to register
-USER_REGISTRATION_COUNT=1
-
-# ===============================
-# 🔓 REPORT UNLOCK SETTINGS
-# ===============================
-# boolean values: true or false to enable or disable report unlocking
-UNLOCK_REPORT=false
-
-
-# ===============================
-# ▶️ + ⚙️ EXECUTION FLOW  SETTINGS
-# ===============================
-
-# boolean values: true or false to enable or disable specific execution flows
-ENABLE_DISCOUNTED_FULL_FLOW = true
-ENABLE_PRO_ACCESS_FLOW = false
-ENABLE_STANDARD_FLOW = false
-ENABLE_PAID_PLATFORM_ACCESS = false
-
-
-# ===============================
-# 🌐 BROWSER SETTINGS
-# ===============================
-# boolean values: true or false to determine if browser should close after completion
-BROWSER_CLOSE_ON_COMPLETION = false/true
-
-
-
-🛠️ Customization
-
-You can extend flows easily:
-
-Add new automation steps in /flows
-Modify retry strategy in index.js
-Add logging/reporting as needed
-
-# configuration settings
-
-all configuration settings are in .env file
-
-# how to run
-
-1. install dependencies
-
-```bash
-npm install
+2. Validate environment configuration
+3. Loop through users (USER_REGISTRATION_COUNT):
+   ├── Navigate to website
+   ├── Register user (phone + email + payment)
+   ├── Generate reports (if ENABLE_CREATE_REPORT=true)
+   ├── Unlock report (if UNLOCK_REPORT=true)
+   ├── Download PDF (if DOWNLOAD_PDF=true)
+   ├── Generate HTML report (if HTML_PAGE_CREATION_FOR_USER_DETAILS=true)
+   └── Logout (if more users remaining)
+4. Retry on failure (up to MAX_RETRIES, with browser restart)
+5. Close browser (if BROWSER_CLOSE_ON_COMPLETION=true)
 ```
 
-2. run the automation
+## Development
+
+Use **nodemon** for auto-reload during development:
 
 ```bash
-npm start
+pnpm dev
 ```
 
-# how to stop
+### Adding New Flows
 
-press `Ctrl + C` in the terminal
+1. Create a new file in the `flows/` directory
+2. Export your async function that accepts a `page` parameter
+3. Import and call it from `index.js` at the appropriate step
+
+## Troubleshooting
+
+| Problem | Solution |
+|---------|----------|
+| `Missing required environment variables` | Copy `.env.example` to `.env` and fill in required values |
+| `Cannot find module` errors | Run `pnpm install` to install dependencies |
+| Browser crashes or doesn't open | Set `PUPPETEER_HEADLESS=true` to run without UI |
+| Payment fails | Verify `CARD_NUMBER`, `CARD_EXPIRY`, and `CARD_CVV` in `.env` |
+| Timeout errors | Increase `PAGE_TIMEOUT` or `IFRAME_TIMEOUT` in `.env` |
+| `SyntaxError: Unexpected token` | Check `PUPPETEER_DEFAULT_VIEWPORT` is `null` or valid JSON |
+| Chromium download fails | Check network connection and disk space (~500MB needed) |
+| Reports not generating | Ensure `ENABLE_CREATE_REPORT=true` and `REPORT_COUNT` is set |
+| PDF download not working | Ensure `DOWNLOAD_PDF=true` in `.env` |
+
+## Scripts
+
+| Command | Description |
+|---------|-------------|
+| `pnpm start` | Run the automation |
+| `pnpm dev` | Run with auto-reload (nodemon) |
+| `pnpm install` | Install dependencies + download Chromium |
+ 
