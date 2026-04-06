@@ -5,7 +5,7 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 
 puppeteer.use(StealthPlugin());
 
-const isHeadless = process.env.PUPPETEER_HEADLESS === 'true';
+const isHeadless = process.env.PUPPETEER_HEADLESS === 'false';
 const startMaximized = process.env.PUPPETEER_START_MAXIMIZED === 'true';
 
 const defaultViewport =
