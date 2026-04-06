@@ -14,7 +14,7 @@ async function downloadPDF(page) {
         await delay(process.env.COMMON_DELAY_ONCLICKS);
 
       await page.waitForSelector('#site_Privacy', { visible: true, timeout: 30000 });
-      await delay(process.env.CLICK_DELAY_MS);
+      await delay(process.env.COMMON_DELAY_ONCLICKS);
       await page.click('#site_Privacy');
     
       await delay(process.env.COMMON_DELAY_ONCLICKS);
