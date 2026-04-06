@@ -48,7 +48,7 @@ Browser automation tool built with Node.js and Puppeteer for handling user regis
 5. **Run the automation**
 
    ```bash
-   npm start
+   pnpm start
    ```
 
 ## Configuration
