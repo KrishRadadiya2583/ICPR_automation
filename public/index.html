@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Industrial Automation Control Panel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Industrial Automation Control Panel</h1>
+            <p>Configure system parameters and initiate automated processes</p>
+            <div class="header-badges">
+            </div>
+        </header>
+
+        <form id="configForm" class="form-container">
+            <!-- Website Configuration -->
+            <section class="form-section">
+                <h2>Website Configuration</h2>
+                <div class="form-group">
+                    <label for="website_url">Website URL</label>
+                    <input type="url" id="website_url" name="website_url" placeholder="Base URL of the target website"
+                        required />
+                </div>
+            </section>
+
+            <!-- Puppeteer Settings -->
+            <section class="form-section">
+                <h2>Puppeteer Settings</h2>
+                <div class="form-group checkbox">
+                    <label for="puppeteer_headless">
+                        <input type="checkbox" id="puppeteer_headless" name="puppeteer_headless" />
+                        Run browser without visible UI (Headless mode)
+                    </label>
+                </div>
+                <div class="form-group checkbox">
+                    <label for="puppeteer_start_maximized">
+                        <input type="checkbox" id="puppeteer_start_maximized" name="puppeteer_start_maximized"
+                            checked />
+                        Launch browser in maximized window
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label for="puppeteer_viewport">Browser Viewport</label>
+                    <input type="text" id="puppeteer_viewport" name="puppeteer_viewport"
+                        placeholder="null for full window, or JSON like {\" width\":1280,\"height\":800}"
+                        value="null" />
+                </div>
+            </section>
+
+            <!-- Execution Flow -->
+            <section class="form-section">
+                <h2>Execution Flow</h2>
+                <p class="section-hint">Choose exactly ONE flow to enable</p>
+                <div class="form-group checkbox">
+                    <label for="enable_discounted">
+                        <input type="checkbox" id="enable_discounted" name="enable_discounted" checked />
+                        Discounted Full Flow
+                    </label>
+                </div>
+                <div class="form-group checkbox">
+                    <label for="enable_pro">
+                        <input type="checkbox" id="enable_pro" name="enable_pro" />
+                        Pro Access Flow
+                    </label>
+                </div>
+                <div class="form-group checkbox">
+                    <label for="enable_standard">
+                        <input type="checkbox" id="enable_standard" name="enable_standard" />
+                        Standard Flow
+                    </label>
+                </div>
+                <div class="form-group checkbox">
+                    <label for="enable_paid">
+                        <input type="checkbox" id="enable_paid" name="enable_paid" />
+                        Paid Platform Access Flow
+                    </label>
+                </div>
+            </section>
+
+            <!-- User Settings -->
+            <section class="form-section">
+                <h2>User Settings</h2>
+                <div class="form-group">
+                    <label for="user_count">Number of users to register in one run</label>
+                    <input type="number" id="user_count" name="user_count" placeholder="Number of users" value="1"
+                        min="1" />
+                </div>
+                <div class="form-group">
+                    <label for="max_retries">Maximum Retries</label>
+                    <input type="number" id="max_retries" name="max_retries"
+                        placeholder="Number of retries for failed attempts" value="3" min="1" />
+                </div>
+            </section>
+
+            <!-- Card Details -->
+            <section class="form-section">
+                <h2>Card Details</h2>
+                <div class="form-group">
+                    <label for="card_number">Card Number</label>
+                    <input type="text" id="card_number" name="card_number" placeholder="16-digit card number"
+                        maxlength="16" />
+                </div>
+                <div class="form-group">
+                    <label for="card_expiry">Card Expiry</label>
+                    <input type="text" id="card_expiry" name="card_expiry" placeholder="Expiry in MM/YY format"
+                        maxlength="5" />
+                </div>
+                <div class="form-group">
+                    <label for="card_cvv">CVV</label>
+                    <input type="text" id="card_cvv" name="card_cvv" placeholder="3 or 4 digit CVV" maxlength="4" />
+                </div>
+            </section>
+
+            <!-- Report Settings -->
+            <section class="form-section">
+                <h2>Report Settings</h2>
+                <div class="form-group checkbox">
+                    <label for="enable_report">
+                        <input type="checkbox" id="enable_report" name="enable_report" />
+                        Generate reports after registration
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label for="report_count">Number of reports to generate</label>
+                    <input type="number" id="report_count" name="report_count" placeholder="Number of reports" value="1"
+                        min="1" />
+                </div>
+                <div class="form-group checkbox">
+                    <label for="unlock_report">
+                        <input type="checkbox" id="unlock_report" name="unlock_report" />
+                        Unlock the latest report after generation
+                    </label>
+                </div>
+            </section>
+
+            <!-- PDF & HTML Settings -->
+            <section class="form-section">
+                <h2>PDF & HTML Settings</h2>
+                <div class="form-group checkbox">
+                    <label for="download_pdf">
+                        <input type="checkbox" id="download_pdf" name="download_pdf" />
+                        Download PDF after registration
+                    </label>
+                </div>
+                <div class="form-group checkbox">
+                    <label for="html_creation">
+                        <input type="checkbox" id="html_creation" name="html_creation" />
+                        Generate HTML page with registered user credentials
+                    </label>
+                </div>
+                <div class="form-group checkbox">
+                    <label for="open_html">
+                        <input type="checkbox" id="open_html" name="open_html" />
+                        Auto-open generated HTML pages in browser
+                    </label>
+                </div>
+            </section>
+
+            <!-- Browser Settings -->
+            <section class="form-section">
+                <h2>Browser Settings</h2>
+                <div class="form-group checkbox">
+                    <label for="browser_close">
+                        <input type="checkbox" id="browser_close" name="browser_close" />
+                        Close browser on completion
+                    </label>
+                </div>
+            </section>
+
+            <!-- Action Button -->
+            <div class="action-section">
+                <button type="submit" class="start-button">
+                    <span class="button-icon">▶</span>
+                    Start Automation
+                </button>
+            </div>
+        </form>
+
+        <!-- Status Message -->
+        <div id="statusMessage" class="status-message"></div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function () {
+            const configForm = document.getElementById('configForm');
+            const statusMessage = document.getElementById('statusMessage');
+            const startButton = configForm.querySelector('.start-button');
+
+            // Load configuration on page load (API first, then localStorage)
+            await loadConfiguration();
+
+            // Handle flow selection - only one can be selected
+            const flowCheckboxes = {
+                discounted: document.getElementById('enable_discounted'),
+                pro: document.getElementById('enable_pro'),
+                standard: document.getElementById('enable_standard'),
+                paid: document.getElementById('enable_paid')
+            };
+
+            Object.values(flowCheckboxes).forEach(checkbox => {
+                checkbox.addEventListener('change', function () {
+                    if (this.checked) {
+                        Object.values(flowCheckboxes).forEach(cb => {
+                            if (cb !== this) cb.checked = false;
+                        });
+                    }
+                });
+            });
+
+            // Form submission
+            configForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                // Validate form
+                const validation = validateForm();
+                if (!validation.valid) {
+                    showStatus(validation.message, 'error');
+                    return;
+                }
+
+                // Collect form data
+                const config = collectFormData();
+
+                // Disable button during submission
+                startButton.disabled = true;
+                startButton.textContent = '⏳ Running...';
+
+                try {
+                    const response = await fetch('/api/config-and-run', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(config)
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        showStatus('✓ Automation started successfully!', 'success');
+                        saveConfig(config);
+                    } else {
+                        showStatus(`✗ Error: ${result.message || 'Failed to start automation'}`, 'error');
+                    }
+                } catch (error) {
+                    showStatus(`✗ Connection error: ${error.message}`, 'error');
+                    console.error('Error:', error);
+                } finally {
+                    startButton.disabled = false;
+                    startButton.innerHTML = '<span class="button-icon">▶</span> Start Automation';
+                }
+            });
+
+            async function loadConfiguration() {
+                try {
+                    // Fetch environment configuration from API
+                    const response = await fetch('/api/config');
+                    const envConfig = await response.json();
+
+                    // Load saved config from localStorage (if exists)
+                    const savedConfig = localStorage.getItem('automationConfig');
+                    let config = envConfig;
+
+                    if (savedConfig) {
+                        try {
+                            config = { ...envConfig, ...JSON.parse(savedConfig) };
+                        } catch (e) {
+                            console.log('Could not restore saved config');
+                        }
+                    }
+
+                    // Apply configuration to form
+                    applyConfigToForm(config);
+                } catch (error) {
+                    console.error('Could not load configuration:', error);
+                    // Fallback to just loading saved config from localStorage
+                    loadSavedConfig();
+                }
+            }
+
+            function applyConfigToForm(config) {
+                Object.keys(config).forEach(key => {
+                    const elementId = getElementId(key);
+                    const element = document.getElementById(elementId);
+
+                    if (element) {
+                        if (element.type === 'checkbox') {
+                            element.checked = config[key] === 'true' || config[key] === true ? true : false;
+                        } else {
+                            element.value = config[key];
+                        }
+                    }
+                });
+            }
+
+            function collectFormData() {
+                return {
+                    WEBSITE_URL: document.getElementById('website_url').value,
+                    PUPPETEER_HEADLESS: document.getElementById('puppeteer_headless').checked ? 'true' : 'false',
+                    PUPPETEER_START_MAXIMIZED: document.getElementById('puppeteer_start_maximized').checked ? 'true' : 'false',
+                    PUPPETEER_DEFAULT_VIEWPORT: document.getElementById('puppeteer_viewport').value,
+                    ENABLE_DISCOUNTED_FULL_FLOW: document.getElementById('enable_discounted').checked ? 'true' : 'false',
+                    ENABLE_PRO_ACCESS_FLOW: document.getElementById('enable_pro').checked ? 'true' : 'false',
+                    ENABLE_STANDARD_FLOW: document.getElementById('enable_standard').checked ? 'true' : 'false',
+                    ENABLE_PAID_PLATFORM_ACCESS: document.getElementById('enable_paid').checked ? 'true' : 'false',
+                    USER_REGISTRATION_COUNT: document.getElementById('user_count').value,
+                    MAX_RETRIES: document.getElementById('max_retries').value,
+                    CARD_NUMBER: document.getElementById('card_number').value,
+                    CARD_EXPIRY: document.getElementById('card_expiry').value,
+                    CARD_CVV: document.getElementById('card_cvv').value,
+                    ENABLE_CREATE_REPORT: document.getElementById('enable_report').checked ? 'true' : 'false',
+                    REPORT_COUNT: document.getElementById('report_count').value,
+                    UNLOCK_REPORT: document.getElementById('unlock_report').checked ? 'true' : 'false',
+                    DOWNLOAD_PDF: document.getElementById('download_pdf').checked ? 'true' : 'false',
+                    HTML_PAGE_CREATION_FOR_USER_DETAILS: document.getElementById('html_creation').checked ? 'true' : 'false',
+                    OPEN_HTML_PAGES: document.getElementById('open_html').checked ? 'true' : 'false',
+                    BROWSER_CLOSE_ON_COMPLETION: document.getElementById('browser_close').checked ? 'true' : 'false'
+                };
+            }
+
+            function validateForm() {
+                const url = document.getElementById('website_url').value.trim();
+                const cardNumber = document.getElementById('card_number').value.trim();
+                const cardExpiry = document.getElementById('card_expiry').value.trim();
+                const cardCvv = document.getElementById('card_cvv').value.trim();
+
+                // Check if at least one flow is selected
+                const flowSelected =
+                    document.getElementById('enable_discounted').checked ||
+                    document.getElementById('enable_pro').checked ||
+                    document.getElementById('enable_standard').checked ||
+                    document.getElementById('enable_paid').checked;
+
+                if (!url) {
+                    return { valid: false, message: 'Website URL is required' };
+                }
+
+                if (!flowSelected) {
+                    return { valid: false, message: 'Please select at least one flow' };
+                }
+
+                // Validate card details format if any field is filled
+                if (cardNumber || cardExpiry || cardCvv) {
+                    if (!cardNumber || cardNumber.length !== 16) {
+                        return { valid: false, message: 'Card number must be 16 digits' };
+                    }
+                    if (!cardExpiry || !cardExpiry.match(/^\d{2}\/\d{2}$/)) {
+                        return { valid: false, message: 'Card expiry must be in MM/YY format' };
+                    }
+                    if (!cardCvv || cardCvv.length < 3) {
+                        return { valid: false, message: 'CVV must be 3 or 4 digits' };
+                    }
+                }
+
+                return { valid: true };
+            }
+
+            function showStatus(message, type) {
+                statusMessage.textContent = message;
+                statusMessage.className = `status-message ${type}`;
+                statusMessage.style.display = 'block';
+
+                // Auto-hide success messages after 5 seconds
+                if (type === 'success') {
+                    setTimeout(() => {
+                        statusMessage.style.display = 'none';
+                    }, 5000);
+                }
+            }
+
+            function saveConfig(config) {
+                localStorage.setItem('automationConfig', JSON.stringify(config));
+            }
+
+            function loadSavedConfig() {
+                const saved = localStorage.getItem('automationConfig');
+                if (saved) {
+                    try {
+                        const config = JSON.parse(saved);
+                        applyConfigToForm(config);
+                    } catch (e) {
+                        console.log('Could not restore saved config');
+                    }
+                }
+            }
+
+            function getElementId(envKey) {
+                const mapping = {
+                    'WEBSITE_URL': 'website_url',
+                    'PUPPETEER_HEADLESS': 'puppeteer_headless',
+                    'PUPPETEER_START_MAXIMIZED': 'puppeteer_start_maximized',
+                    'PUPPETEER_DEFAULT_VIEWPORT': 'puppeteer_viewport',
+                    'ENABLE_DISCOUNTED_FULL_FLOW': 'enable_discounted',
+                    'ENABLE_PRO_ACCESS_FLOW': 'enable_pro',
+                    'ENABLE_STANDARD_FLOW': 'enable_standard',
+                    'ENABLE_PAID_PLATFORM_ACCESS': 'enable_paid',
+                    'USER_REGISTRATION_COUNT': 'user_count',
+                    'MAX_RETRIES': 'max_retries',
+                    'CARD_NUMBER': 'card_number',
+                    'CARD_EXPIRY': 'card_expiry',
+                    'CARD_CVV': 'card_cvv',
+                    'ENABLE_CREATE_REPORT': 'enable_report',
+                    'REPORT_COUNT': 'report_count',
+                    'UNLOCK_REPORT': 'unlock_report',
+                    'DOWNLOAD_PDF': 'download_pdf',
+                    'HTML_PAGE_CREATION_FOR_USER_DETAILS': 'html_creation',
+                    'OPEN_HTML_PAGES': 'open_html',
+                    'BROWSER_CLOSE_ON_COMPLETION': 'browser_close'
+                };
+                return mapping[envKey] || '';
+            }
+        });
+
+    </script>
+</body>
+
+</html>
