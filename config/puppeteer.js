@@ -18,7 +18,7 @@ async function launchBrowser() {
     return await puppeteer.launch({
         headless: isHeadless,
         defaultViewport: defaultViewport,
-        args:startMaximized ? ['--start-maximized'] : [],
+        args:startMaximized ? ['--start-maximized','--no-sandbox','--disable-setuid-sandbox'] : [],
     });
 }
 
