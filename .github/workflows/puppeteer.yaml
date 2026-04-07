@@ -1,4 +1,5 @@
-name: Puppeteer CI
+# File: .github/workflows/puppeteer.yml
+name: Run Puppeteer Script
  
 on:
   push:
@@ -10,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
  
     steps:
-    - name: Checkout code
+    - name: Checkout Code
       uses: actions/checkout@v3
  
     - name: Setup Node.js
@@ -18,13 +19,14 @@ jobs:
       with:
         node-version: 18
  
-    - name: Install dependencies
+    - name: Install Dependencies
       run: npm install
  
-    - name: Install Puppeteer Chromium dependencies
+    - name: Install Chromium dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y \
+        sudo apt-get install -y --no-install-recommends \
+          chromium-browser \
           fonts-liberation \
           libappindicator3-1 \
           libatk-bridge2.0-0 \
@@ -55,8 +57,4 @@ jobs:
           libxi6 \
           libxrandr2 \
           libxrender1 \
-          libxss1 \
-          chromium-browser
- 
-    - name: Run Puppeteer script
-      run: node index.js
+          libxss1
