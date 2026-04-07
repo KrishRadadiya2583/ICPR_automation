@@ -13,6 +13,17 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v3
+
+
+         
+   - name: Upload HTML report
+     uses: actions/upload-artifact@v3
+     with:
+        name: html-report
+        path: report.html
+    
+
+
  
     - name: Setup Node.js
       uses: actions/setup-node@v3
@@ -21,7 +32,7 @@ jobs:
  
     - name: Install Dependencies
       run: npm install
- 
+
     - name: Install Chromium dependencies
       run: |
         sudo apt-get update
@@ -58,8 +69,4 @@ jobs:
           libxrandr2 \
           libxrender1 \
           libxss1
-         - name: Upload HTML report
-     uses: actions/upload-artifact@v3
-    with:
-    name: html-report
-    path: report.html
+  
