@@ -5,7 +5,7 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 
 puppeteer.use(StealthPlugin());
 
-const isHeadless = process.env.PUPPETEER_HEADLESS === 'false';
+const isHeadless = process.env.PUPPETEER_HEADLESS === 'true';
 const startMaximized = process.env.PUPPETEER_START_MAXIMIZED === 'true';
 
 const defaultViewport =
@@ -18,7 +18,12 @@ async function launchBrowser() {
     return await puppeteer.launch({
         headless: isHeadless,
         defaultViewport: defaultViewport,
-        args:startMaximized ? ['--start-maximized','--no-sandbox','--disable-setuid-sandbox'] : [],
+        args:startMaximized ? ['--start-maximized','--no-sandbox','--disable-setuid-sandbox','--disable-dev-shm-usage', // optional, helps with small /dev/shm
+
+    '--disable-gpu',            // optional
+
+    '--disable-software-rasterizer'
+ ] : [],
     });
 }
 
