@@ -58,3 +58,8 @@ jobs:
           libxrandr2 \
           libxrender1 \
           libxss1
+         - name: Upload HTML report
+     uses: actions/upload-artifact@v3
+    with:
+    name: html-report
+    path: report.html
