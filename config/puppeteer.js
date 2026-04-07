@@ -25,6 +25,13 @@ async function launchBrowser() {
     '--disable-software-rasterizer'
  ] : [],
     });
+
+  // Example: save HTML content
+
+  const htmlContent = await page.content();
+
+  fs.writeFileSync('report.html', htmlContent);
+ 
 }
 
 module.exports = { launchBrowser };
