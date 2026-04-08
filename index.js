@@ -120,6 +120,8 @@ async function runAutomation() {
                          }
 
                     } else if (i != userRegistrationCount) {
+
+                        await delay(process.env.COMMON_DELAY_ONCLICKS);
                         await logout(page);
                     }
                   
