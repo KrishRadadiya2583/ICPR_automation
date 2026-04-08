@@ -45,8 +45,11 @@ async function registerusers(page) {
     console.log(chalk.cyan("Waiting for payment page..."));
 
     // ===== STEP 5: HANDLE IFRAME =====
-    await handlePayment(page);
 
+    await delay(process.env.COMMON_DELAY_ONCLICKS);
+    await handlePayment(page);
+    await delay(process.env.COMMON_DELAY_ONCLICKS);
+    
     console.log(chalk.green("[success]"), "user register successfully");
 
 
