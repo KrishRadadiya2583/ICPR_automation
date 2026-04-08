@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Industrial Automation Control Panel</title>
+    <title>ICPR automation panel</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -14,8 +14,8 @@
 <body>
     <div class="container">
         <header class="header">
-            <h1>Industrial Automation Control Panel</h1>
-            <p>Configure system parameters and initiate automated processes</p>
+            <h1>ICPR automation panel</h1>
+            <p></p>
             <div class="header-badges">
             </div>
         </header>
@@ -25,7 +25,7 @@
             <section class="form-section">
                 <h2>Website Configuration</h2>
                 <div class="form-group">
-                    <label for="website_url">Website URL</label>
+                    <label for="website_url">Base URL of the target website (required)</label>
                     <input type="url" id="website_url" name="website_url" placeholder="Base URL of the target website"
                         required />
                 </div>
@@ -37,18 +37,19 @@
                 <div class="form-group checkbox">
                     <label for="puppeteer_headless">
                         <input type="checkbox" id="puppeteer_headless" name="puppeteer_headless" />
-                        Run browser without visible UI (Headless mode)
+                       Browser Headless mode on/off
+                      
                     </label>
                 </div>
                 <div class="form-group checkbox">
                     <label for="puppeteer_start_maximized">
                         <input type="checkbox" id="puppeteer_start_maximized" name="puppeteer_start_maximized"
                             checked />
-                        Launch browser in maximized window
+                        Launch browser in maximized window for puppeteer
                     </label>
                 </div>
                 <div class="form-group">
-                    <label for="puppeteer_viewport">Browser Viewport</label>
+                    <label for="puppeteer_viewport">Browser Viewport for puppeteer</label>
                     <input type="text" id="puppeteer_viewport" name="puppeteer_viewport"
                         placeholder="null for full window, or JSON like {\" width\":1280,\"height\":800}"
                         value="null" />
@@ -58,7 +59,7 @@
             <!-- Execution Flow -->
             <section class="form-section">
                 <h2>Execution Flow</h2>
-                <p class="section-hint">Choose exactly ONE flow to enable</p>
+                <p class="section-hint">Choose one flow to enable. Set the desired flow to checked, all others to unchecked.</p>
                 <div class="form-group checkbox">
                     <label for="enable_discounted">
                         <input type="checkbox" id="enable_discounted" name="enable_discounted" checked />
@@ -90,15 +91,15 @@
                 <h2>User Settings</h2>
                 <div class="grid-2-col">
                     <div class="form-group">
-                        <label for="user_count">Number of users to register</label>
-                        <input type="number" id="user_count" name="user_count" placeholder="Number of users" value="1"
+                        <label for="user_count"> Number of users to register in one run</label>
+                        <input type="number" id="user_count" name="user_count" placeholder=" Number of users to register in one run" value="1"
                             min="1" />
                     </div>
                     <div class="form-group">
-                        <label for="max_retries">Maximum Retries</label>
+                        <label for="max_retries">Maximum retry attempts per Execution</label>
                         <input type="number" id="max_retries" name="max_retries"
-                            placeholder="Number of retries" value="3" min="1" />
-                    </div>
+                            placeholder="Maximum retry attempts per Execution" value="3" min="1" />
+                    </div> 
                 </div>
             </section>
 
@@ -106,19 +107,19 @@
             <section class="form-section">
                 <h2>Card Details</h2>
                 <div class="form-group">
-                    <label for="card_number">Card Number</label>
+                    <label for="card_number">16-digit card number</label>
                     <input type="text" id="card_number" name="card_number" placeholder="16-digit card number"
                         maxlength="16" />
                 </div>
                 <div class="grid-2-col">
                     <div class="form-group">
-                        <label for="card_expiry">Card Expiry</label>
+                        <label for="card_expiry">Card Expiry in MM/YY format</label>
                         <input type="text" id="card_expiry" name="card_expiry" placeholder="Expiry in MM/YY format"
                             maxlength="5" />
                     </div>
                     <div class="form-group">
-                        <label for="card_cvv">CVV</label>
-                        <input type="text" id="card_cvv" name="card_cvv" placeholder="3 or 4 digit CVV" maxlength="4" />
+                        <label for="card_cvv">3 or 4 digit Card CVV</label>
+                        <input type="text" id="card_cvv" name="card_cvv" placeholder="3 or 4 digit card CVV" maxlength="4" />
                     </div>
                 </div>
             </section>
@@ -133,8 +134,8 @@
                     </label>
                 </div>
                 <div class="form-group">
-                    <label for="report_count">Number of reports to generate</label>
-                    <input type="number" id="report_count" name="report_count" placeholder="Number of reports" value="1"
+                    <label for="report_count">Number of reports to generate per execution</label>
+                    <input type="number" id="report_count" name="report_count" placeholder="Number of reports to generate per execution" value="1"
                         min="1" />
                 </div>
                 <div class="form-group checkbox">
@@ -151,7 +152,7 @@
                 <div class="form-group checkbox">
                     <label for="download_pdf">
                         <input type="checkbox" id="download_pdf" name="download_pdf" />
-                        Download PDF after registration
+                        Download Report PDF after registration
                     </label>
                 </div>
                 <div class="form-group checkbox">
