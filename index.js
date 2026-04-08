@@ -1,4 +1,5 @@
 require('dotenv').config();
+const open = require("open").default;
 const chalk = require("chalk");
 const express = require("express");
 const path = require("path");
@@ -10,6 +11,8 @@ const { generateReportsAndUnlock } = require("./flows/reports");
 const { logout } = require("./flows/auth");
 const { downloadPDF } = require("./flows/pdf_subscription");
 const delay = require("./utils/delay");
+
+
 
 const app = express();
 const PORT = 3000;
@@ -177,8 +180,12 @@ if (CLI_MODE) {
     });
 } else {
     // Server mode - start Express server
-    app.listen(PORT, () => {
+    app.listen(PORT, async () => {
+     
         console.log(chalk.green(`✓ Automation Dashboard running at http://localhost:${PORT}`));
         console.log(chalk.cyan(`  Open your browser and navigate to http://localhost:${PORT}`));
+        
+        // Automatically open the browser
+        await open(`http://localhost:${PORT}`);
     });
 }
