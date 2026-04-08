@@ -25,8 +25,10 @@ async function registerusers(page) {
         console.log(chalk.green("Search submitted"));
     }
     else {
-        await page.waitForSelector(".span-text", { visible: true });
-        await page.click(".span-text");
+        await delay(500)
+        await page.waitForSelector(".span-text , button[type='submit'] , .input-suffix", { visible: true , clickCount: 10 });
+        await delay(500)
+        await page.click(".span-text , button[type='submit'] , .input-suffix");
         console.log(chalk.green("Search submitted"));
     }
 
