@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Industrial Automation Control Panel</title>
+    <title>ICPR automation panel</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -12,190 +12,280 @@
 </head>
 
 <body>
-    <div class="container">
-        <header class="header">
-            <h1>Industrial Automation Control Panel</h1>
-            <p>Configure system parameters and initiate automated processes</p>
-            <div class="header-badges">
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-text">ICPR automation panel</span>
+                </div>
             </div>
-        </header>
-
-        <form id="configForm" class="form-container">
-            <!-- Website Configuration -->
-            <section class="form-section">
-                <h2>Website Configuration</h2>
-                <div class="form-group">
-                    <label for="website_url">Website URL</label>
-                    <input type="url" id="website_url" name="website_url" placeholder="Base URL of the target website"
-                        required />
+            <nav class="sidebar-nav">
+                <div class="sidebar-info">
+                    <h3>About Automation</h3>
+                    <p class="description">
+                        An easy-to-use tool that automates user registration, payments, and report generation using a
+                        browser.
+                    </p>
+                    <ul class="features">
+                        <li><span>✓</span> Creates user accounts</li>
+                        <li><span>✓</span> Secure payment steps</li>
+                        <li><span>✓</span> Generates reports</li>
+                        <li><span>✓</span> Downloads PDFs</li>
+                    </ul>
                 </div>
-            </section>
-
-            <!-- Puppeteer Settings -->
-            <section class="form-section">
-                <h2>Puppeteer Settings</h2>
-                <div class="form-group checkbox">
-                    <label for="puppeteer_headless">
-                        <input type="checkbox" id="puppeteer_headless" name="puppeteer_headless" />
-                        Run browser without visible UI (Headless mode)
-                    </label>
-                </div>
-                <div class="form-group checkbox">
-                    <label for="puppeteer_start_maximized">
-                        <input type="checkbox" id="puppeteer_start_maximized" name="puppeteer_start_maximized"
-                            checked />
-                        Launch browser in maximized window
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label for="puppeteer_viewport">Browser Viewport</label>
-                    <input type="text" id="puppeteer_viewport" name="puppeteer_viewport"
-                        placeholder="null for full window, or JSON like {\" width\":1280,\"height\":800}"
-                        value="null" />
-                </div>
-            </section>
-
-            <!-- Execution Flow -->
-            <section class="form-section">
-                <h2>Execution Flow</h2>
-                <p class="section-hint">Choose exactly ONE flow to enable</p>
-                <div class="form-group checkbox">
-                    <label for="enable_discounted">
-                        <input type="checkbox" id="enable_discounted" name="enable_discounted" checked />
-                        Discounted Full Flow
-                    </label>
-                </div>
-                <div class="form-group checkbox">
-                    <label for="enable_pro">
-                        <input type="checkbox" id="enable_pro" name="enable_pro" />
-                        Pro Access Flow
-                    </label>
-                </div>
-                <div class="form-group checkbox">
-                    <label for="enable_standard">
-                        <input type="checkbox" id="enable_standard" name="enable_standard" />
-                        Standard Flow
-                    </label>
-                </div>
-                <div class="form-group checkbox">
-                    <label for="enable_paid">
-                        <input type="checkbox" id="enable_paid" name="enable_paid" />
-                        Paid Platform Access Flow
-                    </label>
-                </div>
-            </section>
-
-            <!-- User Settings -->
-            <section class="form-section">
-                <h2>User Settings</h2>
-                <div class="grid-2-col">
-                    <div class="form-group">
-                        <label for="user_count">Number of users to register</label>
-                        <input type="number" id="user_count" name="user_count" placeholder="Number of users" value="1"
-                            min="1" />
-                    </div>
-                    <div class="form-group">
-                        <label for="max_retries">Maximum Retries</label>
-                        <input type="number" id="max_retries" name="max_retries"
-                            placeholder="Number of retries" value="3" min="1" />
-                    </div>
-                </div>
-            </section>
-
-            <!-- Card Details -->
-            <section class="form-section">
-                <h2>Card Details</h2>
-                <div class="form-group">
-                    <label for="card_number">Card Number</label>
-                    <input type="text" id="card_number" name="card_number" placeholder="16-digit card number"
-                        maxlength="16" />
-                </div>
-                <div class="grid-2-col">
-                    <div class="form-group">
-                        <label for="card_expiry">Card Expiry</label>
-                        <input type="text" id="card_expiry" name="card_expiry" placeholder="Expiry in MM/YY format"
-                            maxlength="5" />
-                    </div>
-                    <div class="form-group">
-                        <label for="card_cvv">CVV</label>
-                        <input type="text" id="card_cvv" name="card_cvv" placeholder="3 or 4 digit CVV" maxlength="4" />
-                    </div>
-                </div>
-            </section>
-
-            <!-- Report Settings -->
-            <section class="form-section">
-                <h2>Report Settings</h2>
-                <div class="form-group checkbox">
-                    <label for="enable_report">
-                        <input type="checkbox" id="enable_report" name="enable_report" />
-                        Generate reports after registration
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label for="report_count">Number of reports to generate</label>
-                    <input type="number" id="report_count" name="report_count" placeholder="Number of reports" value="1"
-                        min="1" />
-                </div>
-                <div class="form-group checkbox">
-                    <label for="unlock_report">
-                        <input type="checkbox" id="unlock_report" name="unlock_report" />
-                        Unlock the latest report after generation
-                    </label>
-                </div>
-            </section>
-
-            <!-- PDF & HTML Settings -->
-            <section class="form-section">
-                <h2>PDF & HTML Settings</h2>
-                <div class="form-group checkbox">
-                    <label for="download_pdf">
-                        <input type="checkbox" id="download_pdf" name="download_pdf" />
-                        Download PDF after registration
-                    </label>
-                </div>
-                <div class="form-group checkbox">
-                    <label for="html_creation">
-                        <input type="checkbox" id="html_creation" name="html_creation" />
-                        Generate HTML page with registered user credentials
-                    </label>
-                </div>
-                <div class="form-group checkbox">
-                    <label for="open_html">
-                        <input type="checkbox" id="open_html" name="open_html" />
-                        Auto-open generated HTML pages in browser
-                    </label>
-                </div>
-            </section>
-
-            <!-- Browser Settings -->
-            <section class="form-section">
-                <h2>Browser Settings</h2>
-                <div class="form-group checkbox">
-                    <label for="browser_close">
-                        <input type="checkbox" id="browser_close" name="browser_close" />
-                        Close browser on completion
-                    </label>
-                </div>
-            </section>
-
-            <!-- Action Button -->
-            <div class="action-section">
-                <button type="submit" class="start-button">
-                    <span class="button-icon">▶</span>
-                    Start Automation
-                </button>
+            </nav>
+            <div class="sidebar-footer">
+                <p> Configure once, start the process, and let automation do the rest.</p>
             </div>
-        </form>
+        </aside>
 
-        <!-- Status Message -->
-        <div id="statusMessage" class="status-message"></div>
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="page-title">
+                    <h1>ICPR automation panel</h1>
+                    <p>Configure your execution parameters for automation</p>
+                </div>
+                <div class="top-actions">
+                    <span id="currentTime"></span>
+                </div>
+            </header>
+
+            <form id="configForm" class="config-form">
+                <div class="form-grid">
+                    <!-- Website Configuration -->
+                    <section class="form-card full-width">
+                        <div class="card-header">
+                            <span class="card-icon">🌐</span>
+                            <h2>Website Configuration</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="website_url">Base URL of the target website (required)</label>
+                                <input type="url" id="website_url" name="website_url" placeholder="https://example.com"
+                                    required />
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Puppeteer Settings -->
+                    <section class="form-card">
+                        <div class="card-header">
+                            <span class="card-icon">🖥️</span>
+                            <h2>Puppeteer Settings</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group checkbox">
+                                <label for="puppeteer_headless">
+                                    <input type="checkbox" id="puppeteer_headless" name="puppeteer_headless" />
+                                    <span>Browser Headless Mode on/off</span>
+                                </label>
+                            </div>
+                            <div class="form-group checkbox">
+                                <label for="puppeteer_start_maximized">
+                                    <input type="checkbox" id="puppeteer_start_maximized"
+                                        name="puppeteer_start_maximized" checked />
+                                    <span>Start Maximized</span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label for="puppeteer_viewport">Browser Viewport</label>
+                                <input type="text" id="puppeteer_viewport" name="puppeteer_viewport"
+                                    placeholder="e.g. {\" width\":1280,\"height\":800}" value="null" />
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Execution Flow -->
+                    <section class="form-card">
+                        <div class="card-header">
+                            <span class="card-icon">⚡</span>
+                            <h2>Execution Flow</h2>
+                        </div>
+                        <div class="card-body">
+                            <p class="section-hint">Choose one flow to enable. Set the desired flow to checked. all
+                                other flows should be unchecked.</p>
+                            <div class="flow-options">
+                                <div class="form-group checkbox">
+                                    <label for="enable_discounted">
+                                        <input type="checkbox" id="enable_discounted" name="enable_discounted"
+                                            checked />
+                                        <span>Discounted Full Flow</span>
+                                    </label>
+                                </div>
+                                <div class="form-group checkbox">
+                                    <label for="enable_pro">
+                                        <input type="checkbox" id="enable_pro" name="enable_pro" />
+                                        <span>Pro Access Flow</span>
+                                    </label>
+                                </div>
+                                <div class="form-group checkbox">
+                                    <label for="enable_standard">
+                                        <input type="checkbox" id="enable_standard" name="enable_standard" />
+                                        <span>Standard Flow</span>
+                                    </label>
+                                </div>
+                                <div class="form-group checkbox">
+                                    <label for="enable_paid">
+                                        <input type="checkbox" id="enable_paid" name="enable_paid" />
+                                        <span>Paid Platform Access</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- User Settings -->
+                    <section class="form-card">
+                        <div class="card-header">
+                            <span class="card-icon">👥</span>
+                            <h2>User Settings</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="grid-2">
+                                <div class="form-group">
+                                    <label for="user_count">Number of users to register at one execution</label>
+                                    <input type="number" id="user_count" name="user_count" value="1" min="1"
+                                        placeholder="Number of users to register at one execution" />
+                                </div>
+                                <br>
+                                <div class="form-group">
+                                    <label for="max_retries">Max Retries if execution fails</label>
+                                    <input type="number" id="max_retries" name="max_retries" value="3" min="1"
+                                        placeholder="Max Retries if execution fails" />
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Card Details -->
+                    <section class="form-card">
+                        <div class="card-header">
+                            <span class="card-icon">💳</span>
+                            <h2>Payment Details</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="card_number">16-Digit Card Number</label>
+                                <input type="text" id="card_number" name="card_number" placeholder="0000 0000 0000 0000"
+                                    maxlength="16" />
+                            </div>
+                            <div class="grid-2">
+                                <div class="form-group">
+                                    <label for="card_expiry">Expiry (MM/YY)</label>
+                                    <input type="text" id="card_expiry" name="card_expiry" placeholder="MM/YY"
+                                        maxlength="5" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="card_cvv">CVV</label>
+                                    <input type="text" id="card_cvv" name="card_cvv" placeholder="123" maxlength="4" />
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Report Settings -->
+                    <section class="form-card">
+                        <div class="card-header">
+                            <span class="card-icon">📊</span>
+                            <h2>Report Settings</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group checkbox">
+                                <label for="enable_report">
+                                    <input type="checkbox" id="enable_report" name="enable_report" />
+                                    <span>Generate Reports after registration on/off</span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label for="report_count">Number of Reports to generate at one execution</label>
+                                <input type="number" id="report_count" name="report_count" value="1" min="1"
+                                    placeholder="Number of Reports to generate at one execution" />
+                            </div>
+                            <div class="form-group checkbox">
+                                <label for="unlock_report">
+                                    <input type="checkbox" id="unlock_report" name="unlock_report" />
+                                    <span>Auto-Unlock Latest Report after generation </span>
+                                </label>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Output Settings -->
+                    <section class="form-card">
+                        <div class="card-header">
+                            <span class="card-icon">📦</span>
+                            <h2>PDF & HTML Settings</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group checkbox">
+                                <label for="download_pdf">
+                                    <input type="checkbox" id="download_pdf" name="download_pdf" />
+                                    <span>Download PDF Reports after registration </span>
+                                </label>
+                            </div>
+                            <div class="form-group checkbox">
+                                <label for="html_creation">
+                                    <input type="checkbox" id="html_creation" name="html_creation" />
+                                    <span>Create Result html page with user credentials after registration </span>
+                                </label>
+                            </div>
+                            <div class="form-group checkbox">
+                                <label for="open_html">
+                                    <input type="checkbox" id="open_html" name="open_html" />
+                                    <span>Auto-Open User Credentials html page </span>
+                                </label>
+                            </div>
+
+                        </div>
+                    </section>
+                    <section class="form-card full-width">
+                        <div class="card-header">
+                            <span class="card-icon">🌐</span>
+                            <h2>Browser Settings</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <div class="form-group checkbox">
+                                    <label for="browser_close">
+                                        <input type="checkbox" id="browser_close" name="browser_close" />
+                                        <span>Close Browser on Finish execution</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="form-footer">
+                    <div id="statusMessage" class="status-message"></div>
+                    <button type="submit" class="start-button">
+                        <span class="btn-text">Execute Automation</span>
+                        <span class="btn-icon">⚡</span>
+                    </button>
+                </div>
+            </form>
+        </main>
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', async function () {
+            // Update current time
+            function updateTime() {
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                const dateStr = now.toLocaleDateString([], { day: 'numeric', month: 'short' });
+                const timeElement = document.getElementById('currentTime');
+                if (timeElement) {
+                    timeElement.innerHTML = `<span style="color: var(--text-muted)">${dateStr}</span> <span style="font-weight: 600; margin-left: 8px">${timeStr}</span>`;
+                }
+            }
+            setInterval(updateTime, 1000);
+            updateTime();
+
             const configForm = document.getElementById('configForm');
             const statusMessage = document.getElementById('statusMessage');
             const startButton = configForm.querySelector('.start-button');
+            const btnText = startButton.querySelector('.btn-text');
+            const btnIcon = startButton.querySelector('.btn-icon');
 
             // Load configuration on page load (API first, then localStorage)
             await loadConfiguration();
@@ -234,7 +324,10 @@
 
                 // Disable button during submission
                 startButton.disabled = true;
-                startButton.textContent = '⏳ Running...';
+                const originalText = btnText.textContent;
+                const originalIcon = btnIcon.textContent;
+                btnText.textContent = 'Running...';
+                btnIcon.textContent = '⏳';
 
                 try {
                     const response = await fetch('/api/config-and-run', {
@@ -258,7 +351,8 @@
                     console.error('Error:', error);
                 } finally {
                     startButton.disabled = false;
-                    startButton.innerHTML = '<span class="button-icon">▶</span> Start Automation';
+                    btnText.textContent = originalText;
+                    btnIcon.textContent = originalIcon;
                 }
             });
 
@@ -284,7 +378,7 @@
                     applyConfigToForm(config);
                 } catch (error) {
                     console.error('Could not load configuration:', error);
-                
+
                     loadSavedConfig();
                 }
             }
