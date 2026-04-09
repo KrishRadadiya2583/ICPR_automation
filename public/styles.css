@@ -294,11 +294,66 @@ input[type="number"] {
     transition: all 0.2s ease;
 }
 
-input:focus {
+input:focus,
+select:focus {
     outline: none;
     border-color: var(--primary);
     background: #ffffff;
     box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+.select-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.select-icon {
+    position: absolute;
+    left: 1rem;
+    font-size: 1.1rem;
+    pointer-events: none;
+    z-index: 1;
+}
+
+select {
+    width: 100%;
+    padding: 0.875rem 1.25rem 0.875rem 2.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: #ffffff;
+    color: var(--text-main);
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: calc(100% - 1.25rem) center;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+select:hover {
+    border-color: var(--primary);
+    background-color: var(--primary-soft);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
+}
+
+select:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15), 0 8px 16px rgba(0, 0, 0, 0.05);
+}
+
+.flow-options {
+    margin-bottom: 2rem;
+    background: var(--primary-soft);
+    padding: 1rem;
+    border-radius: var(--radius-xl);
+    border: 1px solid #dbeafe;
 }
 
 .grid-2 {

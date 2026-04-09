@@ -18,7 +18,12 @@ async function handlePayment(page) {
     await frame.waitForSelector("#ccnumber", { visible: true, clickCount: 10 });
 
     console.log(chalk.blue(" card number typing started."));
+if(process.env.ENABLE_PAID_PLATFORM_ACCESS === "true"){
+    await frame.type("#ccnumber", process.env.PAID_VISA_CARD_NUMBER);
+}
+else{
     await frame.type("#ccnumber", process.env.CARD_NUMBER);
+}
     console.log(chalk.blue(" card number typing completed."));
 
 

@@ -102,34 +102,27 @@
                             <h2>Execution Flow</h2>
                         </div>
                         <div class="card-body">
-                            <p class="section-hint">Choose one flow to enable. Set the desired flow to checked. all
-                                other flows should be unchecked.</p>
+                            <p class="section-hint">Choose the execution flow for automation. Only one flow can be active at a time.</p>
                             <div class="flow-options">
-                                <div class="form-group checkbox">
-                                    <label for="enable_discounted">
-                                        <input type="checkbox" id="enable_discounted" name="enable_discounted"
-                                            checked />
-                                        <span>Discounted Full Flow</span>
-                                    </label>
+                                <div class="form-group">
+                                    <label for="execution_flow">Select Active Flow</label>
+                                    <div class="select-wrapper">
+                                        <span class="select-icon">⚡</span>
+                                        <select id="execution_flow" name="execution_flow">
+                                            <option value="ENABLE_DISCOUNTED_FULL_FLOW">Discounted Full Flow</option>
+                                            <option value="ENABLE_PRO_ACCESS_FLOW">Pro Access Flow</option>
+                                            <option value="ENABLE_STANDARD_FLOW">Standard Flow</option>
+                                            <option value="ENABLE_PAID_PLATFORM_ACCESS">Paid Platform Access</option>
+                                        </select>
+                                    </div>
                                 </div>
-                                <div class="form-group checkbox">
-                                    <label for="enable_pro">
-                                        <input type="checkbox" id="enable_pro" name="enable_pro" />
-                                        <span>Pro Access Flow</span>
-                                    </label>
-                                </div>
-                                <div class="form-group checkbox">
-                                    <label for="enable_standard">
-                                        <input type="checkbox" id="enable_standard" name="enable_standard" />
-                                        <span>Standard Flow</span>
-                                    </label>
-                                </div>
-                                <div class="form-group checkbox">
-                                    <label for="enable_paid">
-                                        <input type="checkbox" id="enable_paid" name="enable_paid" />
-                                        <span>Paid Platform Access</span>
-                                    </label>
-                                </div>
+                            </div>
+                            <div class="form-group checkbox">
+
+                                <label for="download_pdf">
+                                    <input type="checkbox" id="download_pdf" name="download_pdf" />
+                                    <span>Download PDF Reports after registration </span>
+                                </label>
                             </div>
                         </div>
                     </section>
@@ -217,12 +210,7 @@
                             <h2>PDF & HTML Settings</h2>
                         </div>
                         <div class="card-body">
-                            <div class="form-group checkbox">
-                                <label for="download_pdf">
-                                    <input type="checkbox" id="download_pdf" name="download_pdf" />
-                                    <span>Download PDF Reports after registration </span>
-                                </label>
-                            </div>
+                            
                             <div class="form-group checkbox">
                                 <label for="html_creation">
                                     <input type="checkbox" id="html_creation" name="html_creation" />
@@ -290,23 +278,7 @@
             // Load configuration on page load (API first, then localStorage)
             await loadConfiguration();
 
-            // Handle flow selection - only one can be selected
-            const flowCheckboxes = {
-                discounted: document.getElementById('enable_discounted'),
-                pro: document.getElementById('enable_pro'),
-                standard: document.getElementById('enable_standard'),
-                paid: document.getElementById('enable_paid')
-            };
-
-            Object.values(flowCheckboxes).forEach(checkbox => {
-                checkbox.addEventListener('change', function () {
-                    if (this.checked) {
-                        Object.values(flowCheckboxes).forEach(cb => {
-                            if (cb !== this) cb.checked = false;
-                        });
-                    }
-                });
-            });
+            // Flow selection logic removed as it's now a single dropdown (select element)
 
             // Form submission
             configForm.addEventListener('submit', async function (e) {
@@ -384,7 +356,23 @@
             }
 
             function applyConfigToForm(config) {
+                const flowSelect = document.getElementById('execution_flow');
+                const flowKeys = [
+                    'ENABLE_DISCOUNTED_FULL_FLOW',
+                    'ENABLE_PRO_ACCESS_FLOW',
+                    'ENABLE_STANDARD_FLOW',
+                    'ENABLE_PAID_PLATFORM_ACCESS'
+                ];
+
                 Object.keys(config).forEach(key => {
+                    // Handle execution flows specifically for the dropdown
+                    if (flowKeys.includes(key)) {
+                        if (config[key] === 'true' || config[key] === true) {
+                            flowSelect.value = key;
+                        }
+                        return;
+                    }
+
                     const elementId = getElementId(key);
                     const element = document.getElementById(elementId);
 
@@ -399,15 +387,17 @@
             }
 
             function collectFormData() {
+                const selectedFlow = document.getElementById('execution_flow').value;
+
                 return {
                     WEBSITE_URL: document.getElementById('website_url').value,
                     PUPPETEER_HEADLESS: document.getElementById('puppeteer_headless').checked ? 'true' : 'false',
                     PUPPETEER_START_MAXIMIZED: document.getElementById('puppeteer_start_maximized').checked ? 'true' : 'false',
                     PUPPETEER_DEFAULT_VIEWPORT: document.getElementById('puppeteer_viewport').value,
-                    ENABLE_DISCOUNTED_FULL_FLOW: document.getElementById('enable_discounted').checked ? 'true' : 'false',
-                    ENABLE_PRO_ACCESS_FLOW: document.getElementById('enable_pro').checked ? 'true' : 'false',
-                    ENABLE_STANDARD_FLOW: document.getElementById('enable_standard').checked ? 'true' : 'false',
-                    ENABLE_PAID_PLATFORM_ACCESS: document.getElementById('enable_paid').checked ? 'true' : 'false',
+                    ENABLE_DISCOUNTED_FULL_FLOW: selectedFlow === 'ENABLE_DISCOUNTED_FULL_FLOW' ? 'true' : 'false',
+                    ENABLE_PRO_ACCESS_FLOW: selectedFlow === 'ENABLE_PRO_ACCESS_FLOW' ? 'true' : 'false',
+                    ENABLE_STANDARD_FLOW: selectedFlow === 'ENABLE_STANDARD_FLOW' ? 'true' : 'false',
+                    ENABLE_PAID_PLATFORM_ACCESS: selectedFlow === 'ENABLE_PAID_PLATFORM_ACCESS' ? 'true' : 'false',
                     USER_REGISTRATION_COUNT: document.getElementById('user_count').value,
                     MAX_RETRIES: document.getElementById('max_retries').value,
                     CARD_NUMBER: document.getElementById('card_number').value,
@@ -429,19 +419,15 @@
                 const cardExpiry = document.getElementById('card_expiry').value.trim();
                 const cardCvv = document.getElementById('card_cvv').value.trim();
 
-                // Check if at least one flow is selected
-                const flowSelected =
-                    document.getElementById('enable_discounted').checked ||
-                    document.getElementById('enable_pro').checked ||
-                    document.getElementById('enable_standard').checked ||
-                    document.getElementById('enable_paid').checked;
+                // Check if a flow is selected
+                const flowSelected = document.getElementById('execution_flow').value;
 
                 if (!url) {
                     return { valid: false, message: 'Website URL is required' };
                 }
 
                 if (!flowSelected) {
-                    return { valid: false, message: 'Please select at least one flow' };
+                    return { valid: false, message: 'Please select an execution flow' };
                 }
 
                 // Validate card details format if any field is filled
