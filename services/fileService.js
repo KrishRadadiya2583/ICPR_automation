@@ -15,24 +15,24 @@ function appendUser(email) {
         hour12: false
     }).formatToParts(now);
 
-    if(process.env.USER_REGISTRATION_COUNT > 1) {
- const get = (type) => parts.find(p => p.type === type).value;
- 
-    const formattedDate = `${get("year")}-${get("month")}-${get("day")}`;
+    if (process.env.USER_REGISTRATION_COUNT > 1) {
+        const get = (type) => parts.find(p => p.type === type).value;
 
-    const fileName = `users-${formattedDate}.txt`;
-    
-    fs.appendFileSync(fileName, `${email}\n`);
+        const formattedDate = `${get("year")}-${get("month")}-${get("day")}`;
+
+        const fileName = `users-${formattedDate}.txt`;
+
+        fs.appendFileSync(fileName, `${email}\n`);
     }
     else {
 
-    const get = (type) => parts.find(p => p.type === type).value;
+        const get = (type) => parts.find(p => p.type === type).value;
 
-    const formattedDate = `${get("year")}-${get("month")}-${get("day")}_${get("hour")}-${get("minute")}-${get("second")}`;
+        const formattedDate = `${get("year")}-${get("month")}-${get("day")}_${get("hour")}-${get("minute")}-${get("second")}`;
 
-    const fileName = `users-${formattedDate}.txt`;
+        const fileName = `users-${formattedDate}.txt`;
 
-    fs.appendFileSync(fileName, `${email}\n`);
-}
+        fs.appendFileSync(fileName, `${email}\n`);
+    }
 }
 module.exports = { appendUser };

@@ -1,7 +1,7 @@
 const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
 async function fetchPassword(page, email) {
- 
+
   const yopmailPage = await page.browser().newPage();
 
   await yopmailPage.goto(`https://yopmail.com/en/?login=${email}`, {
@@ -19,21 +19,21 @@ async function fetchPassword(page, email) {
     );
     await delay(2000 + Math.random() * 2000);
 
-  
+
     try {
       await yopmailPage.click("#refresh");
-    } catch (e) {}
+    } catch (e) { }
 
     await delay(4000);
 
-  
+
     const inboxHandle = await yopmailPage.$("#ifinbox");
     if (!inboxHandle) continue;
 
     const inboxFrame = await inboxHandle.contentFrame();
     if (!inboxFrame) continue;
 
-    await inboxFrame.waitForSelector(".m", { timeout: 10000 }).catch(() => {});
+    await inboxFrame.waitForSelector(".m", { timeout: 10000 }).catch(() => { });
 
     const emails = await inboxFrame.$$(".m");
 

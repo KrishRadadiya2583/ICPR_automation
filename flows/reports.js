@@ -4,7 +4,7 @@ const { randomMobile } = require("../utils/generator");
 
 async function generateReportsAndUnlock(page) {
     for (let i = 1; i <= process.env.REPORT_COUNT; i++) {
-        if(process.env.ENABLE_CREATE_REPORT != "true"){
+        if (process.env.ENABLE_CREATE_REPORT != "true") {
             console.log(chalk.bgYellowBright("report generation skipped"));
             break;
         }
