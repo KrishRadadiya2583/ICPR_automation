@@ -99,16 +99,17 @@
                     <section class="form-card">
                         <div class="card-header">
                             <span class="card-icon">⚡</span>
-                            <h2>Execution Flow</h2>
+                            <h2>Select Subscription Flow</h2>
                         </div>
                         <div class="card-body">
-                            <p class="section-hint">Choose the execution flow for automation. Only one flow can be active at a time.</p>
+                            <p class="section-hint">Choose the subscription flow for automation. Only one flow can be active at a time.</p>
                             <div class="flow-options">
                                 <div class="form-group">
                                     <label for="execution_flow">Select Active Flow</label>
                                     <div class="select-wrapper">
                                         <span class="select-icon">⚡</span>
                                         <select id="execution_flow" name="execution_flow">
+                                            <option value="">-- Select a flow (None) --</option>
                                             <option value="ENABLE_DISCOUNTED_FULL_FLOW">Discounted Full Flow</option>
                                             <option value="ENABLE_PRO_ACCESS_FLOW">Pro Access Flow</option>
                                             <option value="ENABLE_STANDARD_FLOW">Standard Flow</option>
@@ -124,6 +125,24 @@
                                     <span>Download PDF Reports after registration </span>
                                 </label>
                             </div>
+                            <br><br>
+                            <div class="card-header">
+                                <span class="card-icon">⚡</span>
+                                <h2>Funnel Subscription Flow</h2>
+                            </div>
+                            <br>
+                            <div class="form-group">
+                                <label for="funnel_flow">Select Funnel Flow</label>
+                                <div class="select-wrapper">
+                                    <span class="select-icon">🔗</span>
+                                    <select id="funnel_flow" name="funnel_flow">
+                                        <option value="">-- Select a funnel flow (None) --</option>
+                                        <option value="ENABLE_FREE_PLATFORM_ACCESS">Free Platform Access</option>
+                                        <option value="ENABLE_PAID_PLATFORM">Paid Platform</option>
+                                    </select>
+                                </div>
+                            </div>
+
                         </div>
                     </section>
 
@@ -276,9 +295,37 @@
             const btnIcon = startButton.querySelector('.btn-icon');
 
             // Load configuration on page load (API first, then localStorage)
+            let paidVisaCardNumber = '4532456618142692'; // default fallback
             await loadConfiguration();
 
-            // Flow selection logic removed as it's now a single dropdown (select element)
+            // Auto-update card number when Paid Platform Access is selected
+            const flowSelect = document.getElementById('execution_flow');
+            const funnelFlowSelect = document.getElementById('funnel_flow');
+            const cardNumberInput = document.getElementById('card_number');
+
+            flowSelect.addEventListener('change', function () {
+                if (this.value) {
+                    // Deselect funnel flow if a main flow is selected
+                    funnelFlowSelect.value = "";
+                }
+
+                if (this.value === 'ENABLE_PAID_PLATFORM_ACCESS') {
+                    cardNumberInput.value = paidVisaCardNumber;
+                }
+                else if (this.value === "") {
+                    // Do nothing or clear card number if needed
+                }
+                else {
+                    cardNumberInput.value = "4067429974719265";
+                }
+            });
+
+            funnelFlowSelect.addEventListener('change', function () {
+                if (this.value) {
+                    // Deselect main execution flow if a funnel flow is selected
+                    flowSelect.value = "";
+                }
+            });
 
             // Form submission
             configForm.addEventListener('submit', async function (e) {
@@ -314,7 +361,6 @@
 
                     if (response.ok) {
                         showStatus('✓ Automation started successfully!', 'success');
-                        saveConfig(config);
                     } else {
                         showStatus(`✗ Error: ${result.message || 'Failed to start automation'}`, 'error');
                     }
@@ -333,25 +379,15 @@
                     // Fetch environment configuration from API
                     const response = await fetch('/api/config');
                     const envConfig = await response.json();
-
-                    // Load saved config from localStorage (if exists)
-                    const savedConfig = localStorage.getItem('automationConfig');
-                    let config = envConfig;
-
-                    if (savedConfig) {
-                        try {
-                            config = { ...envConfig, ...JSON.parse(savedConfig) };
-                        } catch (e) {
-                            console.log('Could not restore saved config');
-                        }
+                    
+                    if (envConfig.PAID_VISA_CARD_NUMBER) {
+                        paidVisaCardNumber = envConfig.PAID_VISA_CARD_NUMBER;
                     }
 
                     // Apply configuration to form
-                    applyConfigToForm(config);
+                    applyConfigToForm(envConfig);
                 } catch (error) {
                     console.error('Could not load configuration:', error);
-
-                    loadSavedConfig();
                 }
             }
 
@@ -363,12 +399,24 @@
                     'ENABLE_STANDARD_FLOW',
                     'ENABLE_PAID_PLATFORM_ACCESS'
                 ];
+                const funnelKeys = [
+                    'ENABLE_FREE_PLATFORM_ACCESS',
+                    'ENABLE_PAID_PLATFORM'
+                ];
 
                 Object.keys(config).forEach(key => {
                     // Handle execution flows specifically for the dropdown
                     if (flowKeys.includes(key)) {
                         if (config[key] === 'true' || config[key] === true) {
                             flowSelect.value = key;
+                        }
+                        return;
+                    }
+
+                    // Handle funnel flows specifically for the dropdown
+                    if (funnelKeys.includes(key)) {
+                        if (config[key] === 'true' || config[key] === true) {
+                            document.getElementById('funnel_flow').value = key;
                         }
                         return;
                     }
@@ -398,6 +446,8 @@
                     ENABLE_PRO_ACCESS_FLOW: selectedFlow === 'ENABLE_PRO_ACCESS_FLOW' ? 'true' : 'false',
                     ENABLE_STANDARD_FLOW: selectedFlow === 'ENABLE_STANDARD_FLOW' ? 'true' : 'false',
                     ENABLE_PAID_PLATFORM_ACCESS: selectedFlow === 'ENABLE_PAID_PLATFORM_ACCESS' ? 'true' : 'false',
+                    ENABLE_FREE_PLATFORM_ACCESS: document.getElementById('funnel_flow').value === 'ENABLE_FREE_PLATFORM_ACCESS' ? 'true' : 'false',
+                    ENABLE_PAID_PLATFORM: document.getElementById('funnel_flow').value === 'ENABLE_PAID_PLATFORM' ? 'true' : 'false',
                     USER_REGISTRATION_COUNT: document.getElementById('user_count').value,
                     MAX_RETRIES: document.getElementById('max_retries').value,
                     CARD_NUMBER: document.getElementById('card_number').value,
@@ -419,8 +469,8 @@
                 const cardExpiry = document.getElementById('card_expiry').value.trim();
                 const cardCvv = document.getElementById('card_cvv').value.trim();
 
-                // Check if a flow is selected
-                const flowSelected = document.getElementById('execution_flow').value;
+                // Check if a flow is selected (either from main flows or funnel flows)
+                const flowSelected = document.getElementById('execution_flow').value || document.getElementById('funnel_flow').value;
 
                 if (!url) {
                     return { valid: false, message: 'Website URL is required' };
@@ -459,21 +509,6 @@
                 }
             }
 
-            function saveConfig(config) {
-                localStorage.setItem('automationConfig', JSON.stringify(config));
-            }
-
-            function loadSavedConfig() {
-                const saved = localStorage.getItem('automationConfig');
-                if (saved) {
-                    try {
-                        const config = JSON.parse(saved);
-                        applyConfigToForm(config);
-                    } catch (e) {
-                        console.log('Could not restore saved config');
-                    }
-                }
-            }
 
             function getElementId(envKey) {
                 const mapping = {

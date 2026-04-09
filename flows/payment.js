@@ -18,6 +18,7 @@ async function handlePayment(page) {
     await frame.waitForSelector("#ccnumber", { visible: true, clickCount: 10 });
 
     console.log(chalk.blue(" card number typing started."));
+    
 if(process.env.ENABLE_PAID_PLATFORM_ACCESS === "true"){
     await frame.type("#ccnumber", process.env.PAID_VISA_CARD_NUMBER);
 }
@@ -39,7 +40,6 @@ else{
 
     // CVV
     await frame.waitForSelector("#cvv2", { visible: true, clickCount: 10 });
-    // await frame.click("#cvv2", { clickCount: 1 });
     console.log(chalk.blue(" card cvv typing started."));
     await frame.type("#cvv2", process.env.CARD_CVV);
     console.log(chalk.blue(" card cvv typing completed."));
@@ -47,6 +47,18 @@ else{
     await delay(process.env.COMMON_DELAY_ONCLICKS);
 
     console.log(chalk.green("Card details filled"));
+
+
+    if(process.env.ENABLE_PAID_PLATFORM_ACCESS === "true"){
+    //      await frame.waitForSelector("#cvv2", { visible: true, clickCount: 10 });
+    // console.log(chalk.blue(" card cvv typing started."));
+    // await frame.type("#cvv2", process.env.CARD_CVV);
+    // console.log(chalk.blue(" card cvv typing completed."));
+        
+
+    }
+
+
 
     // Submit card details
     const submitElement = await frame.$("#submit");
@@ -60,9 +72,12 @@ else{
     // click on continue to open dashboard
     await delay(process.env.COMMON_DELAY_ONCLICKS);
 
+if(process.env.ENABLE_FREE_PLATFORM_ACCESS != "true"){
     await page.waitForSelector("button.continue-btn", { visible: true });
     await page.click("button.continue-btn");
+}
 
+    await delay(process.env.COMMON_DELAY_ONCLICKS);
     console.log(chalk.green("[successfull]"), "dashboard load successfull");
 
     // submit review default 4 star
