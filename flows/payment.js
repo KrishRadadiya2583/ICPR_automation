@@ -15,8 +15,8 @@ async function handlePayment(page) {
     console.log(chalk.blue("card details fill start"));
 
     await delay(100);
-    await frame.waitForSelector("#ccnumber", { visible: true});
-    // await frame.click("#ccnumber", { clickCount: 1 });
+    await frame.waitForSelector("#ccnumber", { visible: true , clickCount:10});
+
     console.log(chalk.blue(" card number typing started."));
     await frame.type("#ccnumber", process.env.CARD_NUMBER);
     console.log(chalk.blue(" card number typing completed."));
@@ -24,8 +24,8 @@ async function handlePayment(page) {
 
 
     // Expiry
-    await frame.waitForSelector("#cardExpiry", { visible: true});
-    // await frame.click("#cardExpiry", { clickCount: 1 });
+    await frame.waitForSelector("#cardExpiry", { visible: true , clickCount:10});
+
     console.log(chalk.blue(" card expiry typing started."));
     await frame.type("#cardExpiry", process.env.CARD_EXPIRY);
     console.log(chalk.blue(" card expiry typing completed."));
@@ -33,7 +33,7 @@ async function handlePayment(page) {
 
     
     // CVV
-    await frame.waitForSelector("#cvv2", { visible: true});
+    await frame.waitForSelector("#cvv2", { visible: true , clickCount:10});
     // await frame.click("#cvv2", { clickCount: 1 });
     console.log(chalk.blue(" card cvv typing started."));
     await frame.type("#cvv2", process.env.CARD_CVV);
