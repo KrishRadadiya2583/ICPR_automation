@@ -1,6 +1,7 @@
 const chalk = require("chalk");
 const delay = require("../utils/delay");
 const { findPaymentFrame } = require("../core/frameHandler");
+const {submitreview} = require("../helper/submitreview");
 
 async function handlePayment(page) {
     console.log(chalk.yellow("Waiting for payment iframe..."));
@@ -72,7 +73,7 @@ else{
     // click on continue to open dashboard
     await delay(process.env.COMMON_DELAY_ONCLICKS);
 
-if(process.env.ENABLE_FREE_PLATFORM_ACCESS != "true"){
+if(process.env.ENABLE_FREE_PLATFORM_ACCESS != "true" && process.env.ENABLE_PAID_PLATFORM != "true" ){
     await page.waitForSelector("button.continue-btn", { visible: true });
     await page.click("button.continue-btn");
 }
@@ -80,24 +81,10 @@ if(process.env.ENABLE_FREE_PLATFORM_ACCESS != "true"){
     await delay(process.env.COMMON_DELAY_ONCLICKS);
     console.log(chalk.green("[successfull]"), "dashboard load successfull");
 
-    // submit review default 4 star
-    await page.waitForSelector(".ant-rate-star-second", { visible: true });
-    await page.click('.ant-rate-star:nth-child(4)');
-
-    console.log(chalk.bgBlue("review submit success"));
-
-    //  close review modal
-    await page.waitForSelector(".ant-modal-close", { visible: true });
-    await page.click('.ant-modal-close');
-
-    console.log(chalk.bgBlue("review close button click success"));
-
-    // close report modal
-    await page.waitForSelector(".ant-modal-close-x", { visible: true });
     await delay(process.env.COMMON_DELAY_ONCLICKS);
-    await page.click(".ant-modal-close-x");
 
-    console.log(chalk.bgYellow("report close button click success"));
+        await submitreview(page);
+    
     console.log(chalk.magenta(" Payment Done"));
 }
 

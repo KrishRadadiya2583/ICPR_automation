@@ -1,76 +1,93 @@
 const express = require("express");
 const chalk = require("chalk");
-const { randomMobile, randomEmail } = require("../utils/generator");
 const { handlePayment } = require("./payment");
 const { appendUser } = require("../services/fileService");
 const { generateHTML } = require("./htmlgenerator");
 const { fetchPassword } = require("./yopmailpasswordfetcher");
 const delay = require("../utils/delay");
-
+const { reportEmailFetcher } = require("./reportemailfetcher");
+const { searchmobileno } = require("../helper/searchmobileno");
+const { useremailtype } = require("../helper/useremailtype");
+const { findHiddenIframe } = require("../core/frameHandler");
 
 const users = [];
 async function registerusers(page) {
-    const mobile = randomMobile();
-    console.log(chalk.blue("Mobile:"), mobile);
 
-    await page.waitForSelector("input[placeholder='Enter a phone number']");
-    await page.type("input[placeholder='Enter a phone number']", mobile, { delay: 50 });
+    // mobil number search & submit
 
-    // ===== STEP 2: SEARCH =====
-    if (process.env.ENABLE_DISCOUNTED_FULL_FLOW === "true" || process.env.ENABLE_STANDARD_FLOW === "true") {
-        await Promise.all([
-            page.waitForNavigation(),
-            page.click("button[type='submit']")
-        ]);
-        console.log(chalk.green("Search submitted"));
-    }
-    else {
-        await delay(500)
-        await page.waitForSelector(".span-text , button[type='submit'] , .input-suffix", { visible: true, clickCount: 10 });
-        await delay(500)
-        await page.click(".span-text , button[type='submit'] , .input-suffix");
-        console.log(chalk.green("Search submitted"));
-    }
+    const mobile = await searchmobileno(page);
 
-    
+    console.log("mobile number typed", mobile)
+
+    await delay(process.env.COMMON_DELAY_ONCLICKS)
+
+    // email type & submit
+
+    const email = await useremailtype(page);
+
+    await delay(process.env.COMMON_DELAY_ONCLICKS)
 
 
-   await page.waitForSelector("#input", { visible: true });
-    const email = randomEmail();
-    console.log(chalk.blueBright("Email:", email));
-    await page.type("#input", email, { delay: 50 });
-     // ===== STEP 4: REGISTER =====
-    await page.click("button.hl_cta_wrap");
+    // free platform access
 
-  
-    if(process.env.ENABLE_FREE_PLATFORM_ACCESS === "true"){
+    if (process.env.ENABLE_FREE_PLATFORM_ACCESS === "true") {
         await delay(4000)
-      
-  await page.goBack();
-  await delay(2000)
 
-  await page.goBack();
-
-  await delay(2000)
-
-        await page.waitForSelector(".location__btn",{visible:true,timeout:60000})
+        await page.goBack();
         await delay(2000)
-        await page.click(".location__btn",{clickCount:10})
+
+        await page.goBack();
+
         await delay(2000)
-  
+
+        await page.waitForSelector(".location__btn", { visible: true, timeout: 60000 })
+        await delay(2000)
+        await page.click(".location__btn", { clickCount: 10 })
+        await delay(2000)
+
     }
-     
-   
+
+
 
     console.log(chalk.cyan("Waiting for payment page..."));
 
-    // ===== STEP 5: HANDLE IFRAME =====
-
-    await delay(process.env.COMMON_DELAY_ONCLICKS);
-    await handlePayment(page);
-    await delay(process.env.COMMON_DELAY_ONCLICKS);
 
     console.log(chalk.green("[success]"), "user register successfully");
+
+    if (process.env.ENABLE_PAID_PLATFORM === "true") {
+
+        await delay(10000)
+
+        await page.close();
+
+        await reportEmailFetcher(page, email);
+
+        console.log(chalk.bgGreenBright("report email fetch success & open report"))
+
+        await delay(5000)
+
+
+        console.log("FIND A SEE NOW BUTTON")
+
+await page.waitForSelector(".location__button_wrap.blurred .unlock__btn_info.user__dark .npd__unlock_icon");
+console.log(chalk.green("see loccation button found"))
+
+await page.evaluate(() => {
+    const el = document.querySelector(".location__button_wrap.blurred .npd__unlock_icon");
+    if (el) el.scrollIntoView({ block: "center" });
+});
+    await delay(process.env.COMMON_DELAY_ONCLICKS)
+await page.click(".location__button_wrap.blurred .npd__unlock_icon");
+        await delay(process.env.COMMON_DELAY_ONCLICKS);
+
+
+    }
+
+    // handla payment & card details
+       await delay(process.env.COMMON_DELAY_ONCLICKS);
+        await handlePayment(page);
+        await delay(process.env.COMMON_DELAY_ONCLICKS);
+
 
 
     if (process.env.HTML_PAGE_CREATION_FOR_USER_DETAILS === "true") {
@@ -83,7 +100,6 @@ async function registerusers(page) {
 
         console.log(chalk.yellow("Fetching password for:"), email, "COMPLETED");
         console.log("Result:", result);
-
 
         users.push({ email: email, password: result });
 
