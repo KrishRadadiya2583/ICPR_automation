@@ -32,15 +32,35 @@ async function registerusers(page) {
         console.log(chalk.green("Search submitted"));
     }
 
-    // ===== STEP 3: EMAIL =====
-    await page.waitForSelector("#input", { visible: true });
+    
+
+
+   await page.waitForSelector("#input", { visible: true });
     const email = randomEmail();
     console.log(chalk.blueBright("Email:", email));
     await page.type("#input", email, { delay: 50 });
-
-
-    // ===== STEP 4: REGISTER =====
+     // ===== STEP 4: REGISTER =====
     await page.click("button.hl_cta_wrap");
+
+  
+    if(process.env.ENABLE_FREE_PLATFORM_ACCESS === "true"){
+        await delay(4000)
+      
+  await page.goBack();
+  await delay(2000)
+
+  await page.goBack();
+
+  await delay(2000)
+
+        await page.waitForSelector(".location__btn",{visible:true,timeout:60000})
+        await delay(2000)
+        await page.click(".location__btn",{clickCount:10})
+        await delay(2000)
+  
+    }
+     
+   
 
     console.log(chalk.cyan("Waiting for payment page..."));
 

@@ -12,19 +12,25 @@ function randomEmail() {
 
 
     if (process.env.ENABLE_DISCOUNTED_FULL_FLOW === "true") {
-        return `sub_discounted_full_access-${number}@yopmail.com`;
+        return `sub_discounted_full_access_${number}@yopmail.com`;
     }
     else if (process.env.ENABLE_PRO_ACCESS_FLOW === "true") {
-        return `sub_pro_access-${number}@yopmail.com`;
+        return `sub_pro_access_${number}@yopmail.com`;
     }
     else if (process.env.ENABLE_STANDARD_FLOW === "true") {
-        return `sub_standard-${number}@yopmail.com`;
+        return `sub_standard_${number}@yopmail.com`;
     }
     else if (process.env.ENABLE_PAID_PLATFORM_ACCESS === "true") {
-        return `paid_visa-${number}@yopmail.com`;
+        return `paid_visa_${number}@yopmail.com`;
+    }
+    else if (process.env.ENABLE_FREE_PLATFORM_ACCESS === "true") {
+        return `free_platform_access_${number}@yopmail.com`;
+    }
+    else if (process.env.ENABLE_PAID_PLATFORM === "true") {
+        return `paid_platform_${number}@yopmail.com`;
     }
     else {
-        return `demouser-${number}@yopmail.com`;
+        return `demouser_${number}@yopmail.com`;
     }
 
 }

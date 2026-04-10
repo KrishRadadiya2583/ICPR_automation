@@ -25,6 +25,18 @@ async function ensureAtHome(page) {
         console.log(chalk.blue("Navigating to:"), targetUrl);
         await page.goto(targetUrl, { waitUntil: "load" });
     }
+    else if (process.env.ENABLE_FREE_PLATFORM_ACCESS === "true") {
+        const targetUrl = process.env.WEBSITE_URL.trim() + "tracking";
+        console.log(chalk.bgCyanBright("free platform access flow enabled"));
+        console.log(chalk.blue("Navigating to:"), targetUrl);
+        await page.goto(targetUrl, { waitUntil: "load" });
+    }
+    else if (process.env.ENABLE_PAID_PLATFORM === "true") {
+        const targetUrl = process.env.WEBSITE_URL.trim() + "tracking";
+        console.log(chalk.bgCyanBright("paid platform funnel flow enabled"));
+        console.log(chalk.blue("Navigating to:"), targetUrl);
+        await page.goto(targetUrl, { waitUntil: "load" });
+    }
     else {
         const targetUrl = process.env.WEBSITE_URL.trim();
         console.log(chalk.bgCyanBright("default access flow enabled"));
