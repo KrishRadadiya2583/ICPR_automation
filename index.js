@@ -53,10 +53,10 @@ app.post('/api/config-and-run', async (req, res) => {
     try {
         const config = req.body;
         updateConfig(config);
-        
+
         // Run automation in background
         runAutomation().catch(err => console.error('Background automation error:', err));
-        
+
         res.json({ success: true, message: 'Automation started' });
     } catch (error) {
         res.status(400).json({ success: false, message: error.message });
@@ -76,7 +76,7 @@ async function runAutomation() {
     // Helper to safely start or restart the browser
     async function initBrowser() {
         if (browser) {
-            try { await browser.close(); } catch (err) {}
+            try { await browser.close(); } catch (err) { }
         }
         browser = await launchBrowser();
         const pages = await browser.pages();
@@ -100,36 +100,36 @@ async function runAutomation() {
 
         // Loop over the total number of users to process
         for (let i = 1; i <= userRegistrationCount; i++) {
-            
+
             // Retry loop for the specific user registration
             for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
                 try {
                     if (attempt > 1) {
-                         console.log(chalk.cyan(`[Retry] User ${i} Attempt ${attempt}/${MAX_RETRIES}`));
+                        console.log(chalk.cyan(`[Retry] User ${i} Attempt ${attempt}/${MAX_RETRIES}`));
                     }
 
                     await ensureAtHome(page);
                     await registerusers(page);
 
-                    
+
                     console.log(chalk.bgGreen("[success]"), "user " + i + " register successfully");
-                    
+
                     if (userRegistrationCount === 1) {
 
                         await generateReportsAndUnlock(page);
 
                         if (process.env.DOWNLOAD_PDF === "true") {
-                             await downloadPDF(page);
-                         }
+                            await downloadPDF(page);
+                        }
 
                     } else if (i != userRegistrationCount) {
 
                         await delay(process.env.COMMON_DELAY_ONCLICKS);
                         await logout(page);
                     }
-                  
+
                     await delay(process.env.COMMON_DELAY_ONCLICKS);
-                    
+
                     // Break the attempt loop if successful
                     break;
                 } catch (err) {
@@ -145,13 +145,13 @@ async function runAutomation() {
 
                     console.log(chalk.yellow(`[Retry] Waiting ${RETRY_DELAY_MS / 1000}s before retrying this part of automation...`));
                     await sleep(RETRY_DELAY_MS);
-                    
+
                     // Restart the browser to clear dirty state before retrying this flow
                     await initBrowser();
                 }
             }
         }
-        
+
         console.log(chalk.green(`[✅ Success] Automation fully completed.`));
 
     } catch (criticalErr) {
@@ -181,10 +181,10 @@ if (CLI_MODE) {
 } else {
     // Server mode - start Express server
     app.listen(PORT, async () => {
-     
+
         console.log(chalk.green(`✓ Automation Dashboard running at http://localhost:${PORT}`));
         console.log(chalk.cyan(`  Open your browser and navigate to http://localhost:${PORT}`));
-        
+
         // Automatically open the browser
         await open(`http://localhost:${PORT}`);
     });
