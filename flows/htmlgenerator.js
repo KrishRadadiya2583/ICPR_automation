@@ -40,6 +40,15 @@ function generateHTML(users) {
                     </button>
                 </div>
             </td>
+
+             <td data-label="Action">
+                <button class="btn btn-primary">
+                <a href="${process.env.WEBSITE_URL}en/login" target="_blank"
+   style="display: flex; align-items: center; gap: 0.5rem; color: white; text-decoration: none;">
+   Login
+</a>
+                </button>
+            </td>
         </tr>
     `).join("");
 
