@@ -19,11 +19,11 @@
 
         console.log(chalk.blue(" card number typing started."));    
     if(process.env.ENABLE_PAID_PLATFORM_ACCESS === "true"){
-        await frame.type("#ccnumber", process.env.PAID_VISA_CARD_NUMBER,{delay:5});
+        await frame.type("#ccnumber", process.env.PAID_VISA_CARD_NUMBER,{delay:50});
         console.log("use paid visa card")    
     }
     else{
-        await frame.type("#ccnumber", process.env.CARD_NUMBER,{delay:5});
+        await frame.type("#ccnumber", process.env.CARD_NUMBER,{delay:50});
         console.log("use normal card")
 
     }
