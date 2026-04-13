@@ -43,8 +43,7 @@ async function registerusers(page) {
         await page.waitForSelector(".location__btn", { visible: true, timeout: 60000 })
         await delay(2000)
         await page.click(".location__btn", { clickCount: 10 })
-        await delay(2000)
-
+        await delay(5000)
     }
 
 
@@ -69,24 +68,18 @@ async function registerusers(page) {
 
         console.log("FIND A SEE NOW BUTTON")
 
-await page.waitForSelector(".location__button_wrap.blurred .unlock__btn_info.user__dark .npd__unlock_icon");
-console.log(chalk.green("see loccation button found"))
-
-await page.evaluate(() => {
-    const el = document.querySelector(".location__button_wrap.blurred .npd__unlock_icon");
-    if (el) el.scrollIntoView({ block: "center" });
-});
-    await delay(process.env.COMMON_DELAY_ONCLICKS)
-await page.click(".location__button_wrap.blurred .npd__unlock_icon");
-        await delay(process.env.COMMON_DELAY_ONCLICKS);
-
 
     }
 
-    // handla payment & card details
+    if(process.env.ENABLE_PAID_PLATFORM != "true"){
+        
+           // handla payment & card details
        await delay(process.env.COMMON_DELAY_ONCLICKS);
         await handlePayment(page);
         await delay(process.env.COMMON_DELAY_ONCLICKS);
+
+    }
+ 
 
 
 

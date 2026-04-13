@@ -59,10 +59,17 @@
                             <h2>Website Configuration</h2>
                         </div>
                         <div class="card-body">
+                            <p class="section-hint">Select the target environment for the automation to run against.</p>
                             <div class="form-group">
-                                <label for="website_url">Base URL of the target website (required)</label>
-                                <input type="url" id="website_url" name="website_url" placeholder="https://example.com"
-                                    required />
+                                <label for="website_url">Select Environment URL (required)</label>
+                                <div class="select-wrapper">
+                                    <select id="website_url" name="website_url" required>
+                                        <!-- <option value="">-- Select Target Environment --</option> -->
+                                        <option value="https://dev-pr.infochecker.com/">https://dev-pr.infochecker.com/</option>
+                                        <option value="https://stage-pr.infochecker.com/">https://stage-pr.infochecker.com/</option>
+                                        <option value="https://uat.infochecker.com/">https://uat.infochecker.com/</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </section>
@@ -107,7 +114,6 @@
                                 <div class="form-group">
                                     <label for="execution_flow">Select Active Flow</label>
                                     <div class="select-wrapper">
-                                        <span class="select-icon">⚡</span>
                                         <select id="execution_flow" name="execution_flow">
                                             <option value="">-- Select a flow (None) --</option>
                                             <option value="ENABLE_DISCOUNTED_FULL_FLOW">Discounted Full Flow</option>
@@ -125,16 +131,14 @@
                                     <span>Download PDF Reports after registration </span>
                                 </label>
                             </div>
-                            <br><br>
+                            <br>
                             <div class="card-header">
-                                <span class="card-icon">⚡</span>
                                 <h2>Funnel Subscription Flow</h2>
                             </div>
                             <br>
                             <div class="form-group">
                                 <label for="funnel_flow">Select Funnel Flow</label>
                                 <div class="select-wrapper">
-                                    <span class="select-icon">🔗</span>
                                     <select id="funnel_flow" name="funnel_flow">
                                         <option value="">-- Select a funnel flow (None) --</option>
                                         <option value="ENABLE_FREE_PLATFORM_ACCESS">Free Platform Access</option>
@@ -226,7 +230,7 @@
                     <section class="form-card">
                         <div class="card-header">
                             <span class="card-icon">📦</span>
-                            <h2>PDF & HTML Settings</h2>
+                            <h2> HTML PAGE CREATION Settings</h2>
                         </div>
                         <div class="card-body">
                             
@@ -405,6 +409,28 @@
                 ];
 
                 Object.keys(config).forEach(key => {
+                    // Handle website URL specially for partial matching (e.g., /en/ URLs)
+                    if (key === 'WEBSITE_URL') {
+                        const urlSelect = document.getElementById('website_url');
+                        if (urlSelect && config[key]) {
+                            const urlStr = config[key].toLowerCase();
+                            let matched = false;
+                            for (let i = 0; i < urlSelect.options.length; i++) {
+                                const optVal = urlSelect.options[i].value.toLowerCase();
+                                if (optVal && (urlStr.includes(optVal) || optVal.includes(urlStr))) {
+                                    urlSelect.selectedIndex = i;
+                                    matched = true;
+                                    break;
+                                }
+                            }
+                            // Fallback to exact match logic if not caught by includes
+                            if (!matched) {
+                                urlSelect.value = config[key];
+                            }
+                        }
+                        return;
+                    }
+
                     // Handle execution flows specifically for the dropdown
                     if (flowKeys.includes(key)) {
                         if (config[key] === 'true' || config[key] === true) {

@@ -1,5 +1,6 @@
 const delay = require("../utils/delay");
-
+const chalk = require("chalk");
+const { handlePayment } = require("./payment");
 async function reportEmailFetcher(page, email) {
     const yopmailPage = await page.browser().newPage();
 
@@ -111,14 +112,35 @@ async function reportEmailFetcher(page, email) {
                                     link.click()
                                 ]);
 
+
                                 if (newTarget) {
-                                    const newPage = await newTarget.page();
-                                    await newPage.bringToFront();
-                                    console.log("Opened in new tab:", newPage.url());
+                                    const page = await newTarget.page();
+                                    await page.goto(page.url());
+                                    console.log("Opened in new tab:", page.url());
 
                                     await yopmailPage.close();
-                     
-     
+
+                                    await delay(process.env.COMMON_DELAY_ONCLICKS);
+
+                                    await page.waitForSelector(".location__button_wrap.blurred .unlock__btn_info.user__dark .npd__unlock_icon");
+                                    console.log(chalk.green("see loccation button found"))
+
+                                    await delay(4000)
+
+                                    await page.evaluate(() => {
+                                        const el = document.querySelector(".location__button_wrap.blurred .npd__unlock_icon");
+                                        if (el) el.scrollIntoView({ block: "center" });
+                                    });
+                                    await delay(process.env.COMMON_DELAY_ONCLICKS)
+                                    await page.click(".location__button_wrap.blurred .npd__unlock_icon");
+                                    await delay(process.env.COMMON_DELAY_ONCLICKS);
+
+                                    await delay(2000)
+                                    await delay(process.env.COMMON_DELAY_ONCLICKS);
+                                    await handlePayment(page);
+                                    await delay(process.env.COMMON_DELAY_ONCLICKS);
+
+                                    
 
                                 } else {
                                     console.log(" Clicked (same tab)");
