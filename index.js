@@ -23,7 +23,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // API endpoint to get current environment configuration
 app.get('/api/config', (req, res) => {
-    require('dotenv').config({ override: true });
     const config = {
         WEBSITE_URL: process.env.WEBSITE_URL || '',
         PUPPETEER_HEADLESS: process.env.PUPPETEER_HEADLESS || 'false',
