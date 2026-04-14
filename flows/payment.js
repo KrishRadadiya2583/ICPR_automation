@@ -8,9 +8,13 @@
         await page.waitForSelector("iframe", { visible: true, timeout: 60000 });
 
         const frame = await findPaymentFrame(page);
+        
+     await page.waitForSelector('iframe#solid-payment-form-iframe, iframe[name="solid-payment-form-iframe"]', { visible: true, timeout: 60000 }); 
+
+        await delay(3000);
 
         console.log(chalk.green("Payment frame found"));
-        console.log(chalk.blue("Frame URL:"), frame.url());
+        // console.log(chalk.blue("Frame URL:"), frame.url());
 
         // Card Number
         console.log(chalk.blue("card details fill start"));
@@ -34,7 +38,7 @@ await frame.click("#ccnumber", { clickCount: 3 });
 
         // Expiry
         await frame.waitForSelector("#cardExpiry", { visible: true,timeout:30000 });
-await frame.click("#cardExpiry", { clickCount: 3 });
+await frame.click("#cardExpiry");
         console.log(chalk.blue(" card expiry typing started."));
         
         await frame.type("#cardExpiry", process.env.CARD_EXPIRY,{delay:5});
@@ -44,7 +48,7 @@ await frame.click("#cardExpiry", { clickCount: 3 });
 
         // CVV
         await frame.waitForSelector("#cvv2", { visible: true,timeout:30000 });
-        await frame.click("#cvv2", { clickCount: 3 });
+        await frame.click("#cvv2");
         console.log(chalk.blue(" card cvv typing started."));
         await frame.type("#cvv2", process.env.CARD_CVV,{delay:5});
         console.log(chalk.blue(" card cvv typing completed."));
@@ -56,7 +60,7 @@ await frame.click("#cardExpiry", { clickCount: 3 });
         if(process.env.ENABLE_PAID_PLATFORM_ACCESS === "true"){
       // logic for zipcode select & type
        await frame.waitForSelector("input[name ='zip']", { visible: true,timeout:30000 });
-        await frame.click("input[name ='zip']", { clickCount: 3 });
+        await frame.click("input[name ='zip']");
         console.log(chalk.blue(" card zipcode typing started."));
         await frame.type("input[name ='zip']","21220",{delay:5});
 await delay(process.env.COMMON_DELAY_ONCLICKS);
