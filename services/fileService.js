@@ -30,7 +30,7 @@ function appendUser(email) {
 
         const formattedDate = `${get("year")}-${get("month")}-${get("day")}_${get("hour")}-${get("minute")}-${get("second")}`;
 
-        const fileName = `users-${formattedDate}.txt`;
+        const fileName = `user-${formattedDate}.txt`;
 
         fs.appendFileSync(fileName, `${email}\n`);
     }

@@ -1,4 +1,4 @@
-const express = require("express");
+
 const chalk = require("chalk");
 const { handlePayment } = require("./payment");
 const { appendUser } = require("../services/fileService");
@@ -8,7 +8,7 @@ const delay = require("../utils/delay");
 const { reportEmailFetcher } = require("./reportemailfetcher");
 const { searchmobileno } = require("../helper/searchmobileno");
 const { useremailtype } = require("../helper/useremailtype");
-const { findHiddenIframe } = require("../core/frameHandler");
+const { free_platform_access } = require("../helper/free_platform_access");
 
 const users = [];
 async function registerusers(page) {
@@ -33,17 +33,10 @@ async function registerusers(page) {
     if (process.env.ENABLE_FREE_PLATFORM_ACCESS === "true") {
         await delay(4000)
 
-        await page.goBack();
-        await delay(2000)
+        await free_platform_access(page);
 
-        await page.goBack();
-
-        await delay(2000)
-
-        await page.waitForSelector(".location__btn", { visible: true, timeout: 60000 })
-        await delay(2000)
-        await page.click(".location__btn", { clickCount: 10 })
-        await delay(5000)
+        console.log(chalk.green("[successfull]"), "free platform access successfull");
+       
     }
 
 
@@ -64,16 +57,13 @@ async function registerusers(page) {
         console.log(chalk.bgGreenBright("report email fetch success & open report"))
 
         await delay(5000)
-
-
         console.log("FIND A SEE NOW BUTTON")
 
 
     }
 
     if(process.env.ENABLE_PAID_PLATFORM != "true"){
-        
-           // handla payment & card details
+
        await delay(process.env.COMMON_DELAY_ONCLICKS);
         await handlePayment(page);
         await delay(process.env.COMMON_DELAY_ONCLICKS);
