@@ -317,7 +317,8 @@
                     cardNumberInput.value = paidVisaCardNumber;
                 }
                 else if (this.value === "") {
-                    // Do nothing or clear card number if needed
+                    // Clear card number if no flow selected
+                    cardNumberInput.value = "";
                 }
                 else {
                     cardNumberInput.value = "4067429974719265";
@@ -328,6 +329,10 @@
                 if (this.value) {
                     // Deselect main execution flow if a funnel flow is selected
                     flowSelect.value = "";
+                    cardNumberInput.value = "4067429974719265";
+                } else {
+                    // Clear card number if no funnel flow selected
+                    cardNumberInput.value = "";
                 }
             });
 
