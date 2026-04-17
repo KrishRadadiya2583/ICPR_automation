@@ -9,6 +9,8 @@ async function reportEmailFetcher(page, email) {
     });
 
     await delay(process.env.COMMON_DELAY_ONCLICKS);
+    await page.close();
+
 
     for (let attempt = 0; attempt < 25; attempt++) {
         console.log(`Attempt ${attempt + 1}`);

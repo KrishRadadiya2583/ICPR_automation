@@ -7,8 +7,8 @@ async function downloadPDF(page) {
   try {
     await delay(process.env.COMMON_DELAY_ONCLICKS);
     await page.waitForSelector(`a[data-title="PDF"]`, { visible: true, timeout: 30000 });
-    await delay(process.env.CLICK_DELAY_MS);
-    await page.click(`a[data-title="PDF"]`);
+    await delay(2000);
+    await page.click(`a[data-title="PDF"]`,{delay:10,clickCount: 10});
     console.log(chalk.green("[PDF]"), "Clicked on PDF subscription link");
 
     await delay(process.env.COMMON_DELAY_ONCLICKS);

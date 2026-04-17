@@ -10,7 +10,8 @@ Browser automation tool built with Node.js and Puppeteer for handling user regis
 - **Report Generation** -- Create and unlock reports after registration
 - **PDF Subscription** -- Download PDF subscriptions for registered users
 - **HTML Reports** -- Generate HTML pages with user credentials for easy reference
-- **Environment-based Config** -- All settings controlled via `.env` file
+- **Web UI Dashboard** -- Configure flow options with dropdowns and run automation from the browser
+- **Environment-based Config** -- All settings controlled via `.env` file or the web dashboard
 - **Modular Architecture** -- Easily extendable with new flows
 
 ## Prerequisites
@@ -45,11 +46,27 @@ Browser automation tool built with Node.js and Puppeteer for handling user regis
    - `CARD_NUMBER`, `CARD_EXPIRY`, `CARD_CVV` -- payment card details
    - Enable exactly one execution flow (`ENABLE_DISCOUNTED_FULL_FLOW`, etc.)
 
-5. **Run the automation**
+5. **Start the automation dashboard**
 
    ```bash
    pnpm start
    ```
+
+6. **Open the UI** -- Visit `http://localhost:3000` in your browser.
+   - Use the dropdowns to choose the active flow and funnel flow.
+   - Configure user count, retry limits, report generation, and browser settings.
+   - Click `Execute Automation` to start the process.
+
+## Web UI Dashboard
+
+The project includes a browser-based dashboard with dropdown controls for:
+- Selecting the target environment URL
+- Choosing a main execution flow (`Discounted Full`, `Pro Access`, `Standard`, or `Paid Platform Access`)
+- Choosing a funnel flow (`Free Platform Access` or `Paid Platform`)
+- Toggling report generation, PDF download, and HTML output
+- Setting browser and retry behavior
+
+This dashboard uses `public/index.html` and `index.js` to serve the UI on `http://localhost:3000`.
 
 ## Configuration
 
@@ -181,7 +198,8 @@ pnpm dev
 
 | Command | Description |
 |---------|-------------|
-| `pnpm start` | Run the automation |
+| `pnpm start` | Launch the web dashboard and start the automation UI |
+| `pnpm run cli` | Run automation directly from the CLI without the dashboard |
 | `pnpm dev` | Run with auto-reload (nodemon) |
 | `pnpm install` | Install dependencies + download Chromium |
  
