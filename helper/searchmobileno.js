@@ -1,10 +1,10 @@
- const { randomMobile, randomEmail } = require("../utils/generator");
- const delay = require("../utils/delay");
- const chalk = require("chalk");
- 
- async function searchmobileno(page) {
- 
-const mobile = randomMobile();
+const { randomMobile, randomEmail } = require("../utils/generator");
+const delay = require("../utils/delay");
+const chalk = require("chalk");
+
+async function searchmobileno(page) {
+
+    const mobile = randomMobile();
     console.log(chalk.blue("Mobile:"), mobile);
 
     await page.waitForSelector("input[placeholder='Enter a phone number']");

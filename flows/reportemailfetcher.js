@@ -142,7 +142,7 @@ async function reportEmailFetcher(page, email) {
                                     await handlePayment(page);
                                     await delay(process.env.COMMON_DELAY_ONCLICKS);
 
-                                    
+
 
                                 } else {
                                     console.log(" Clicked (same tab)");
