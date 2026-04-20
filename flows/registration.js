@@ -38,7 +38,7 @@ async function registerusers(page) {
         console.log(chalk.green("[successfull]"), "free platform access successfull");
 
         await delay(4000)
-       
+
     }
 
 
@@ -52,7 +52,7 @@ async function registerusers(page) {
 
         await delay(10000)
 
-        
+
         await reportEmailFetcher(page, email);
 
         console.log(chalk.bgGreenBright("report email fetch success & open report"))
@@ -63,12 +63,12 @@ async function registerusers(page) {
 
     }
 
-    if(process.env.ENABLE_PAID_PLATFORM != "true"){
+    if (process.env.ENABLE_PAID_PLATFORM != "true") {
         await handlePayment(page);
         await delay(process.env.COMMON_DELAY_ONCLICKS);
 
     }
- 
+
 
 
 

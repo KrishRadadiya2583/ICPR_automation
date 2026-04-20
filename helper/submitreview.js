@@ -3,7 +3,7 @@ const delay = require("../utils/delay");
 
 async function submitreview(page) {
 
-// submit review default 4 star
+    // submit review default 4 star
     await page.waitForSelector(".ant-rate-star-second", { visible: true });
     await page.click('.ant-rate-star:nth-child(4)');
 

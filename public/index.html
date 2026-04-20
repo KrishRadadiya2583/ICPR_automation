@@ -65,9 +65,12 @@
                                 <div class="select-wrapper">
                                     <select id="website_url" name="website_url" required>
                                         <!-- <option value="">-- Select Target Environment --</option> -->
-                                        <option value="https://dev-pr.infochecker.com/">https://dev-pr.infochecker.com/</option>
-                                        <option value="https://stage-pr.infochecker.com/">https://stage-pr.infochecker.com/</option>
-                                        <option value="https://uat.infochecker.com/">https://uat.infochecker.com/</option>
+                                        <option value="https://dev-pr.infochecker.com/">https://dev-pr.infochecker.com/
+                                        </option>
+                                        <option value="https://stage-pr.infochecker.com/">
+                                            https://stage-pr.infochecker.com/</option>
+                                        <option value="https://uat.infochecker.com/">https://uat.infochecker.com/
+                                        </option>
                                     </select>
                                 </div>
                             </div>
@@ -109,7 +112,8 @@
                             <h2>Select Subscription Flow</h2>
                         </div>
                         <div class="card-body">
-                            <p class="section-hint">Choose the subscription flow for automation. Only one flow can be active at a time.</p>
+                            <p class="section-hint">Choose the subscription flow for automation. Only one flow can be
+                                active at a time.</p>
                             <div class="flow-options">
                                 <div class="form-group">
                                     <label for="execution_flow">Select Active Flow</label>
@@ -233,7 +237,7 @@
                             <h2> HTML PAGE CREATION Settings</h2>
                         </div>
                         <div class="card-body">
-                            
+
                             <div class="form-group checkbox">
                                 <label for="html_creation">
                                     <input type="checkbox" id="html_creation" name="html_creation" />
@@ -388,7 +392,7 @@
                     // Fetch environment configuration from API
                     const response = await fetch('/api/config');
                     const envConfig = await response.json();
-                    
+
                     if (envConfig.PAID_VISA_CARD_NUMBER) {
                         paidVisaCardNumber = envConfig.PAID_VISA_CARD_NUMBER;
                     }

@@ -4,11 +4,11 @@ const chalk = require("chalk");
 
 
 async function useremailtype(page) {
-await page.waitForSelector("#input", { visible: true });
+    await page.waitForSelector("#input", { visible: true });
     const email = randomEmail();
     console.log(chalk.blueBright("Email:", email));
     await page.type("#input", email, { delay: 50 });
-     // ===== STEP 4: REGISTER =====
+    // ===== STEP 4: REGISTER =====
     await page.click("button.hl_cta_wrap");
 
 

@@ -11,6 +11,8 @@ const { generateReportsAndUnlock } = require("./flows/reports");
 const { logout } = require("./flows/auth");
 const { downloadPDF } = require("./flows/pdf_subscription");
 const delay = require("./utils/delay");
+const { startRecording, stopRecording } = require('./helper/recording');
+const fs = require('fs');
 
 
 
@@ -71,13 +73,27 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Main automation function
 async function runAutomation() {
     let browser;
     let page;
+    let recorder;
+    const filePath = "./public/users.html";
+
+    if (fs.existsSync(filePath)) {
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error("[Error] Failed to delete HTML page:", err);
+            } else {
+                console.log("File deleted successfully");
+            }
+        });
+    }
 
     // Helper to safely start or restart the browser
     async function initBrowser() {
+
+
+        await stopRecording(recorder);
         if (browser) {
             try { await browser.close(); } catch (err) { }
         }
@@ -86,6 +102,8 @@ async function runAutomation() {
         page = pages[0]; // use existing tab
         page.setDefaultTimeout(90000);
         page.setDefaultNavigationTimeout(90000);
+
+        recorder = await startRecording(page);
     }
 
     function sleep(ms) {
@@ -160,11 +178,13 @@ async function runAutomation() {
     } catch (criticalErr) {
         console.error(chalk.red(`[❌ Critical Error:]`), criticalErr.message);
     } finally {
+        await stopRecording(recorder);
         if (process.env.BROWSER_CLOSE_ON_COMPLETION == "true") {
             if (browser) {
                 await browser.close();
                 console.log(chalk.gray("[Cleanup] Browser closed based on BROWSER_CLOSE_ON_COMPLETION."));
             }
+
         } else {
             console.log(chalk.gray("browser close on completion is set to false, keeping browser open for debugging"));
         }
