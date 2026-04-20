@@ -13,6 +13,8 @@ async function launchBrowser() {
     const defaultViewport =
         !rawViewport || rawViewport === "null" ? null : JSON.parse(rawViewport);
 
+    console.log(`[Puppeteer] Launching browser with viewport: ${rawViewport || 'default'}`);
+
     return await puppeteer.launch({
         headless: isHeadless,
         defaultViewport: defaultViewport,

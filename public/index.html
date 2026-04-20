@@ -99,8 +99,16 @@
                             </div>
                             <div class="form-group">
                                 <label for="puppeteer_viewport">Browser Viewport</label>
-                                <input type="text" id="puppeteer_viewport" name="puppeteer_viewport"
-                                    placeholder="e.g. {\" width\":1280,\"height\":800}" value="null" />
+                                <div class="select-wrapper">
+                                    <select id="puppeteer_viewport" name="puppeteer_viewport">
+                                        <option value="null">Default (Auto)</option>
+                                        <option value='{"width":1728,"height":1117}'>MacBook Pro 14"</option>
+                                        <option value='{"width":1920,"height":1200}'>MacBook Pro 16"</option>
+                                        <option value='{"width":1920,"height":1080}'>Full HD Laptop</option>
+                                        <option value='{"width":1600,"height":900}'>1600 x 900 (HD+)</option>
+<option value='{"width":1280,"height":800}'>1280 x 800 (Old MacBook)</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </section>
@@ -269,9 +277,10 @@
                             </div>
                             <div class="form-group">
                                 <label for="recording_save_path">Recording Save Path</label>
-                                <input type="text" id="recording_save_path" name="recording_save_path" 
+                                <input type="text" id="recording_save_path" name="recording_save_path"
                                     placeholder="e.g. D:\recordings (leave empty for default)" />
-                                <p class="element-hint" style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">
+                                <p class="element-hint"
+                                    style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">
                                     Default: ./recordings folder in current directory
                                 </p>
                             </div>
