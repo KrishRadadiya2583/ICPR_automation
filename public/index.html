@@ -253,6 +253,30 @@
 
                         </div>
                     </section>
+
+                    <!-- Recording Settings -->
+                    <section class="form-card">
+                        <div class="card-header">
+                            <span class="card-icon">🎥</span>
+                            <h2> Recording Settings</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group checkbox">
+                                <label for="enable_recording">
+                                    <input type="checkbox" id="enable_recording" name="enable_recording" />
+                                    <span>Recording for proof</span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label for="recording_save_path">Recording Save Path</label>
+                                <input type="text" id="recording_save_path" name="recording_save_path" 
+                                    placeholder="e.g. D:\recordings (leave empty for default)" />
+                                <p class="element-hint" style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">
+                                    Default: ./recordings folder in current directory
+                                </p>
+                            </div>
+                        </div>
+                    </section>
                     <section class="form-card full-width">
                         <div class="card-header">
                             <span class="card-icon">🌐</span>
@@ -494,7 +518,9 @@
                     DOWNLOAD_PDF: document.getElementById('download_pdf').checked ? 'true' : 'false',
                     HTML_PAGE_CREATION_FOR_USER_DETAILS: document.getElementById('html_creation').checked ? 'true' : 'false',
                     OPEN_HTML_PAGES: document.getElementById('open_html').checked ? 'true' : 'false',
-                    BROWSER_CLOSE_ON_COMPLETION: document.getElementById('browser_close').checked ? 'true' : 'false'
+                    BROWSER_CLOSE_ON_COMPLETION: document.getElementById('browser_close').checked ? 'true' : 'false',
+                    ENABLE_RECORDING: document.getElementById('enable_recording').checked ? 'true' : 'false',
+                    RECORDING_SAVE_PATH: document.getElementById('recording_save_path').value
                 };
             }
 
@@ -566,7 +592,9 @@
                     'DOWNLOAD_PDF': 'download_pdf',
                     'HTML_PAGE_CREATION_FOR_USER_DETAILS': 'html_creation',
                     'OPEN_HTML_PAGES': 'open_html',
-                    'BROWSER_CLOSE_ON_COMPLETION': 'browser_close'
+                    'BROWSER_CLOSE_ON_COMPLETION': 'browser_close',
+                    'ENABLE_RECORDING': 'enable_recording',
+                    'RECORDING_SAVE_PATH': 'recording_save_path'
                 };
                 return mapping[envKey] || '';
             }
