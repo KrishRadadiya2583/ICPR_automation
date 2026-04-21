@@ -4,11 +4,13 @@ const path = require('path');
 const chalk = require('chalk');
 
 async function startRecording(page) {
-    // Ensure recording directory exists
-
-
-    const dir = path.join(__dirname, '..', 'recordings');
-
+    // Determine recording directory
+    let dir;
+    if (process.env.RECORDING_SAVE_PATH && process.env.RECORDING_SAVE_PATH.trim() !== "") {
+        dir = process.env.RECORDING_SAVE_PATH;
+    } else {
+        dir = path.join(__dirname, '..', 'recordings');
+    }
 
     if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
@@ -24,9 +26,7 @@ async function startRecording(page) {
         }
     });
 
-
     const now = new Date();
-
     const indianTime = now.toLocaleString("en-IN", {
         timeZone: "Asia/Kolkata",
         year: "numeric",
@@ -44,37 +44,17 @@ async function startRecording(page) {
         .replace(/, /g, "_")
         .replace(/:/g, "-");
 
+    let flowName = "automation";
+    if (process.env.ENABLE_DISCOUNTED_FULL_FLOW == "true") flowName = "discounted_full_flow";
+    else if (process.env.ENABLE_PRO_ACCESS_FLOW == "true") flowName = "pro_access_flow";
+    else if (process.env.ENABLE_STANDARD_FLOW == "true") flowName = "standard_flow";
+    else if (process.env.ENABLE_PAID_PLATFORM_ACCESS == "true") flowName = "paid_platform_access";
+    else if (process.env.ENABLE_FREE_PLATFORM_ACCESS == "true") flowName = "free_platform_access";
+    else if (process.env.ENABLE_PAID_PLATFORM == "true") flowName = "paid_platform";
 
-    if (process.env.ENABLE_DISCOUNTED_FULL_FLOW == "true") {
-        const savePath = path.join(dir, `recording_discounted_full_flow_${fileNameTime}.mp4`);
-        await recorder.start(savePath);
-        console.log(chalk.blue(`[Recording] Started recording: ${savePath}`));
-    }
-    else if (process.env.ENABLE_PRO_ACCESS_FLOW == "true") {
-        const savePath = path.join(dir, `recording_pro_access_flow_${fileNameTime}.mp4`);
-        await recorder.start(savePath);
-        console.log(chalk.blue(`[Recording] Started recording: ${savePath}`));
-    }
-    else if (process.env.ENABLE_STANDARD_FLOW == "true") {
-        const savePath = path.join(dir, `recording_standard_flow_${fileNameTime}.mp4`);
-        await recorder.start(savePath);
-        console.log(chalk.blue(`[Recording] Started recording: ${savePath}`));
-    }
-    else if (process.env.ENABLE_PAID_PLATFORM_ACCESS == "true") {
-        const savePath = path.join(dir, `recording_paid_platform_access_${fileNameTime}.mp4`);
-        await recorder.start(savePath);
-        console.log(chalk.blue(`[Recording] Started recording: ${savePath}`));
-    }
-    else if (process.env.ENABLE_FREE_PLATFORM_ACCESS == "true") {
-        const savePath = path.join(dir, `recording_free_platform_access_${fileNameTime}.mp4`);
-        await recorder.start(savePath);
-        console.log(chalk.blue(`[Recording] Started recording: ${savePath}`));
-    }
-    else if (process.env.ENABLE_PAID_PLATFORM == "true") {
-        const savePath = path.join(dir, `recording_paid_platform_${fileNameTime}.mp4`);
-        await recorder.start(savePath);
-        console.log(chalk.blue(`[Recording] Started recording: ${savePath}`));
-    }
+    const savePath = path.join(dir, `recording_${flowName}_${fileNameTime}.mp4`);
+    await recorder.start(savePath);
+    console.log(chalk.blue(`[Recording] Started recording: ${savePath}`));
 
     return recorder;
 }

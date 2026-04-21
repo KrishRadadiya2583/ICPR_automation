@@ -48,7 +48,9 @@ app.get('/api/config', (req, res) => {
         DOWNLOAD_PDF: process.env.DOWNLOAD_PDF || 'false',
         HTML_PAGE_CREATION_FOR_USER_DETAILS: process.env.HTML_PAGE_CREATION_FOR_USER_DETAILS || 'false',
         OPEN_HTML_PAGES: process.env.OPEN_HTML_PAGES || 'false',
-        BROWSER_CLOSE_ON_COMPLETION: process.env.BROWSER_CLOSE_ON_COMPLETION || 'false'
+        BROWSER_CLOSE_ON_COMPLETION: process.env.BROWSER_CLOSE_ON_COMPLETION || 'false',
+        ENABLE_RECORDING: process.env.ENABLE_RECORDING || 'false',
+        RECORDING_SAVE_PATH: process.env.RECORDING_SAVE_PATH || ''
     };
     res.json(config);
 });
@@ -103,7 +105,9 @@ async function runAutomation() {
         page.setDefaultTimeout(90000);
         page.setDefaultNavigationTimeout(90000);
 
-        recorder = await startRecording(page);
+        if (process.env.ENABLE_RECORDING === "true") {
+            recorder = await startRecording(page);
+        }
     }
 
     function sleep(ms) {
