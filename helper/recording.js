@@ -1,7 +1,7 @@
 const { PuppeteerScreenRecorder } = require('puppeteer-screen-recorder');
 const fs = require('fs');
 const path = require('path');
-const chalk = require('chalk');
+const logger = require("../utils/logger");
 
 async function startRecording(page) {
     // Determine recording directory
@@ -54,7 +54,7 @@ async function startRecording(page) {
 
     const savePath = path.join(dir, `recording_${flowName}_${fileNameTime}.mp4`);
     await recorder.start(savePath);
-    console.log(chalk.blue(`[Recording] Started recording: ${savePath}`));
+    logger.info(`Started recording: ${savePath}`);
 
     return recorder;
 }
@@ -63,7 +63,7 @@ async function stopRecording(recorder) {
     if (recorder) {
         try {
             await recorder.stop();
-            console.log(chalk.gray("[Recording] Stopped recording video."));
+            logger.process("Stopped recording video.");
         } catch (err) { }
     }
 }

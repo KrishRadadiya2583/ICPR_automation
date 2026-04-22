@@ -1,51 +1,51 @@
-const chalk = require("chalk");
+const logger = require("../utils/logger");
 
 async function ensureAtHome(page) {
-    let baseUrl = (process.env.WEBSITE_URL).trim() + "/en/";
+    let baseUrl = (process.env.WEBSITE_URL).trim() + "en/";
     if (!baseUrl.endsWith('/')) {
-        baseUrl += '/en/';
+        baseUrl += 'en/';
     }
 
     if (process.env.ENABLE_DISCOUNTED_FULL_FLOW === "true") {
         const targetUrl = baseUrl + "track";
-        console.log(chalk.bgCyanBright("discounted full access flow enabled"));
-        console.log(chalk.blue("Navigating to:"), targetUrl);
+        logger.header("discounted full access flow enabled");
+        logger.info(`Navigating to: ${targetUrl}`);
         await page.goto(targetUrl, { waitUntil: "load" });
     }
     else if (process.env.ENABLE_PRO_ACCESS_FLOW === "true") {
         const targetUrl = baseUrl + "tracking";
-        console.log(chalk.bgCyanBright("pro access flow enabled"));
-        console.log(chalk.blue("Navigating to:"), targetUrl);
+        logger.header("pro access flow enabled");
+        logger.info(`Navigating to: ${targetUrl}`);
         await page.goto(targetUrl, { waitUntil: "load" });
     }
     else if (process.env.ENABLE_STANDARD_FLOW === "true") {
         const targetUrl = baseUrl + "track";
-        console.log(chalk.bgCyanBright("standard access flow enabled"));
-        console.log(chalk.blue("Navigating to:"), targetUrl);
+        logger.header("standard access flow enabled");
+        logger.info(`Navigating to: ${targetUrl}`);
         await page.goto(targetUrl, { waitUntil: "load" });
     }
     else if (process.env.ENABLE_PAID_PLATFORM_ACCESS === "true") {
         const targetUrl = baseUrl + "tracking";
-        console.log(chalk.bgCyanBright("paid platform access flow enabled"));
-        console.log(chalk.blue("Navigating to:"), targetUrl);
+        logger.header("paid platform access flow enabled");
+        logger.info(`Navigating to: ${targetUrl}`);
         await page.goto(targetUrl, { waitUntil: "load" });
     }
     else if (process.env.ENABLE_FREE_PLATFORM_ACCESS === "true") {
         const targetUrl = baseUrl + "tracking";
-        console.log(chalk.bgCyanBright("free platform access flow enabled"));
-        console.log(chalk.blue("Navigating to:"), targetUrl);
+        logger.header("free platform access flow enabled");
+        logger.info(`Navigating to: ${targetUrl}`);
         await page.goto(targetUrl, { waitUntil: "load" });
     }
     else if (process.env.ENABLE_PAID_PLATFORM === "true") {
         const targetUrl = baseUrl + "tracking";
-        console.log(chalk.bgCyanBright("paid platform funnel flow enabled"));
-        console.log(chalk.blue("Navigating to:"), targetUrl);
+        logger.header("paid platform funnel flow enabled");
+        logger.info(`Navigating to: ${targetUrl}`);
         await page.goto(targetUrl, { waitUntil: "load" });
     }
     else {
         const targetUrl = baseUrl;
-        console.log(chalk.bgCyanBright("default access flow enabled"));
-        console.log(chalk.blue("Navigating to:"), targetUrl);
+        logger.header("default access flow enabled");
+        logger.info(`Navigating to: ${targetUrl}`);
         await page.goto(targetUrl, { waitUntil: "load" });
     }
 }

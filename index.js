@@ -1,11 +1,11 @@
 require('dotenv').config();
 const open = require("open").default;
-const chalk = require("chalk");
 const express = require("express");
 const path = require("path");
 const { updateConfig } = require("./config/configManager");
 const { runAutomation } = require("./core/automation");
 const { startInteractiveCli } = require("./cli");
+const logger = require("./utils/logger");
 
 const app = express();
 const PORT = 3000;
@@ -51,7 +51,7 @@ app.post('/api/config-and-run', async (req, res) => {
     try {
         const config = req.body;
         updateConfig(config);
-        runAutomation().catch(err => console.error('Background automation error:', err));
+        runAutomation().catch(err => logger.error('Background automation error', err));
         res.json({ success: true, message: 'Automation started' });
     } catch (error) {
         res.status(400).json({ success: false, message: error.message });
@@ -63,19 +63,22 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+
+
 // Main execution logic
 const CLI_MODE = process.env.ENABLE_CLI_MODE === 'true';
 
 if (CLI_MODE) {
     startInteractiveCli().catch(err => {
-        console.error(chalk.red('\n❌ CLI Error:'), err);
+        logger.error('CLI Error', err);
         process.exit(1);
     });
 } else {
     // Server mode - start Express server
     app.listen(PORT, async () => {
-        console.log(chalk.green(`✓ Automation Dashboard running at http://localhost:${PORT}`));
-        console.log(chalk.cyan(`  Open your browser and navigate to http://localhost:${PORT}`));
+        logger.header("Automation Dashboard Started");
+        logger.success(`Dashboard running at http://localhost:${PORT}`);
+        logger.info(`Open your browser and navigate to http://localhost:${PORT}`);
         await open(`http://localhost:${PORT}`);
     });
 }

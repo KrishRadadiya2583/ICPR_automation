@@ -1,4 +1,4 @@
-const chalk = require("chalk");
+const logger = require("../utils/logger");
 const fs = require('fs');
 const { launchBrowser } = require("../config/puppeteer");
 const { ensureAtHome } = require("../flows/navigation");
@@ -18,9 +18,9 @@ async function runAutomation() {
     if (fs.existsSync(filePath)) {
         fs.unlink(filePath, (err) => {
             if (err) {
-                console.error("[Error] Failed to delete HTML page:", err);
+                logger.error("Failed to delete HTML page", err);
             } else {
-                console.log("File deleted successfully");
+                logger.process("Previous results file deleted");
             }
         });
     }
@@ -50,7 +50,7 @@ async function runAutomation() {
     const RETRY_DELAY_MS = process.env.RETRY_DELAY_MS ? parseInt(process.env.RETRY_DELAY_MS) : 5000;
 
     try {
-        console.log(chalk.green("[START]"), "Starting automation process...");
+        logger.header("Starting Automation Process");
         await initBrowser();
 
         const userRegistrationCount = process.env.USER_REGISTRATION_COUNT ? parseInt(process.env.USER_REGISTRATION_COUNT) : 1;
@@ -61,13 +61,13 @@ async function runAutomation() {
             for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
                 try {
                     if (attempt > 1) {
-                        console.log(chalk.cyan(`[Retry] User ${i} Attempt ${attempt}/${MAX_RETRIES}`));
+                        logger.step(`User ${i} Attempt ${attempt}/${MAX_RETRIES}`);
                     }
 
                     await ensureAtHome(page);
                     await registerusers(page);
 
-                    console.log(chalk.bgGreen("[success]"), "user " + i + " register successfully");
+                    logger.success("user " + i + " registered successfully");
 
                     if (userRegistrationCount === 1) {
                         await generateReportsAndUnlock(page);
@@ -82,36 +82,34 @@ async function runAutomation() {
                     await delay(process.env.COMMON_DELAY_ONCLICKS);
                     break;
                 } catch (err) {
-                    console.error(chalk.red(`[❌ Error for user ${i} on Attempt ${attempt}]:`), err.message);
+                    logger.error(`Error for user ${i} on Attempt ${attempt}`, err.message);
 
                     if (attempt === MAX_RETRIES) {
-                        console.error(
-                            chalk.bgRed.white("[FATAL]"),
-                            `Max retries reached (${MAX_RETRIES}) for User ${i}. Skipping to next user.`
-                        );
+                        logger.error(`Max retries reached (${MAX_RETRIES}) for User ${i}. Skipping to next user.`);
                         break;
                     }
 
-                    console.log(chalk.yellow(`[Retry] Waiting ${RETRY_DELAY_MS / 1000}s before retrying...`));
+                    logger.warn(`Waiting ${RETRY_DELAY_MS / 1000}s before retrying...`);
                     await sleep(RETRY_DELAY_MS);
                     await initBrowser();
                 }
             }
         }
 
-        console.log(chalk.green(`[✅ Success] Automation fully completed.`));
+        logger.divider();
+        logger.success("Automation fully completed");
 
     } catch (criticalErr) {
-        console.error(chalk.red(`[❌ Critical Error:]`), criticalErr.message);
+        logger.error("Critical Error", criticalErr.message);
     } finally {
         await stopRecording(recorder);
         if (process.env.BROWSER_CLOSE_ON_COMPLETION == "true") {
             if (browser) {
                 await browser.close();
-                console.log(chalk.gray("[Cleanup] Browser closed."));
+                logger.process("Browser closed.");
             }
         } else {
-            console.log(chalk.gray("browser close on completion is set to false, keeping browser open for debugging"));
+            logger.info("browser close on completion is set to false, keeping browser open for debugging");
         }
     }
 }

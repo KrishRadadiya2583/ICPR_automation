@@ -1,5 +1,5 @@
+const logger = require("../utils/logger");
 const delay = require("../utils/delay");
-const chalk = require("chalk");
 const { handlePayment } = require("./payment");
 async function reportEmailFetcher(page, email) {
     const yopmailPage = await page.browser().newPage();
@@ -13,7 +13,7 @@ async function reportEmailFetcher(page, email) {
 
 
     for (let attempt = 0; attempt < 25; attempt++) {
-        console.log(`Attempt ${attempt + 1}`);
+        logger.step(`Checking Report Email (Attempt ${attempt + 1})`);
 
         await yopmailPage.mouse.move(
             100 + Math.random() * 200,
@@ -24,7 +24,7 @@ async function reportEmailFetcher(page, email) {
         try {
             await yopmailPage.click("#refresh");
         } catch (e) {
-            console.log("Error clicking refresh:", e);
+            logger.error("Error clicking refresh", e);
         }
 
         await delay(4000);
@@ -40,7 +40,7 @@ async function reportEmailFetcher(page, email) {
         const emails = await inboxFrame.$$(".m");
 
         if (!emails.length) {
-            console.log("No emails yet...");
+            logger.process("No emails yet...");
             continue;
         }
 
@@ -64,21 +64,21 @@ async function reportEmailFetcher(page, email) {
                     document.body.innerText.trim()
                 );
 
-                console.log("Email content:", content.slice(0, 100));
+                logger.info("Email content preview: " + content.slice(0, 50).replace(/\n/g, ' '));
 
-                // 🚨 CAPTCHA detection
+                // CAPTCHA detection
                 if (content.includes("CAPTCHA")) {
-                    console.log("⚠️ CAPTCHA detected, waiting...");
+                    logger.warn("CAPTCHA detected, waiting...");
                     await delay(15000);
                     continue;
                 }
 
-                // 🎯 Target email detection
+                // Target email detection
                 if (
                     content.toLowerCase().includes("infochecker") ||
                     content.toLowerCase().includes("view now")
                 ) {
-                    console.log("✅ Target email found");
+                    logger.success("Target email found");
 
                     try {
                         // wait for links inside email
@@ -93,7 +93,7 @@ async function reportEmailFetcher(page, email) {
                             );
 
                             if (text && text.toLowerCase().includes("view now")) {
-                                console.log("🔍 Found 'View Now' button");
+                                logger.process("Found 'View Now' button");
 
                                 // scroll into view
                                 await mailFrame.evaluate(el => {
@@ -118,14 +118,14 @@ async function reportEmailFetcher(page, email) {
                                 if (newTarget) {
                                     const page = await newTarget.page();
                                     await page.goto(page.url());
-                                    console.log("Opened in new tab:", page.url());
+                                    logger.info(`Opened in new tab: ${page.url()}`);
 
                                     await yopmailPage.close();
 
                                     await delay(process.env.COMMON_DELAY_ONCLICKS);
 
                                     await page.waitForSelector(".location__button_wrap.blurred .unlock__btn_info.user__dark .npd__unlock_icon");
-                                    console.log(chalk.green("see loccation button found"))
+                                    logger.success("Location button found")
 
                                     await delay(4000)
 
@@ -145,22 +145,22 @@ async function reportEmailFetcher(page, email) {
 
 
                                 } else {
-                                    console.log(" Clicked (same tab)");
+                                    logger.process("Clicked (same tab)");
                                 }
 
-                                return; // ✅ stop everything once clicked
+                                return; // stop everything once clicked
                             }
                         }
 
-                        console.log("❌ 'View Now' not found in this email");
+                        logger.warn("'View Now' not found in this email");
 
                     } catch (err) {
-                        console.log("Error finding button:", err);
+                        logger.error("Error finding button", err);
                     }
                 }
 
             } catch (err) {
-                console.log("Error reading email, retrying...");
+                logger.error("Error reading email, retrying...");
             }
         }
 
