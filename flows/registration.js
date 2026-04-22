@@ -1,5 +1,5 @@
 
-const chalk = require("chalk");
+const logger = require("../utils/logger");
 const { handlePayment } = require("./payment");
 const { appendUser } = require("../services/fileService");
 const { generateHTML } = require("./htmlgenerator");
@@ -17,7 +17,7 @@ async function registerusers(page) {
 
     const mobile = await searchmobileno(page);
 
-    console.log("mobile number typed", mobile)
+    logger.data("Mobile typed", mobile)
 
     await delay(process.env.COMMON_DELAY_ONCLICKS)
 
@@ -35,7 +35,7 @@ async function registerusers(page) {
 
         await free_platform_access(page);
 
-        console.log(chalk.green("[successfull]"), "free platform access successfull");
+        logger.success("Free platform access successful");
 
         await delay(4000)
 
@@ -43,10 +43,10 @@ async function registerusers(page) {
 
 
 
-    console.log(chalk.cyan("Waiting for payment page..."));
+    logger.process("Waiting for payment page...");
 
 
-    console.log(chalk.green("[success]"), "user register successfully");
+    logger.success("User register successful");
 
     if (process.env.ENABLE_PAID_PLATFORM === "true") {
 
@@ -55,10 +55,10 @@ async function registerusers(page) {
 
         await reportEmailFetcher(page, email);
 
-        console.log(chalk.bgGreenBright("report email fetch success & open report"))
+        logger.success("report email fetch success & open report")
 
         await delay(5000)
-        console.log("FIND A SEE NOW BUTTON")
+        logger.process("looking for 'See Now' button")
 
 
     }
@@ -73,35 +73,33 @@ async function registerusers(page) {
 
 
     if (process.env.HTML_PAGE_CREATION_FOR_USER_DETAILS === "true") {
-        console.log(chalk.yellow("Fetching password for:"), email, "STARTED");
+        logger.step("Fetching password for " + email + " STARTED");
 
         await delay(process.env.COMMON_DELAY_ONCLICKS); // wait for file write
         const result = await fetchPassword(page, email);
 
         await delay(process.env.COMMON_DELAY_ONCLICKS);
 
-        console.log(chalk.yellow("Fetching password for:"), email, "COMPLETED");
-        console.log("Result:", result);
+        logger.step("Fetching password for " + email + " COMPLETED");
+        logger.data("Result", result);
 
         users.push({ email: email, password: result });
 
         await delay(1000)
 
-        console.log(users);
-
 
         if (users.length == parseInt(process.env.USER_REGISTRATION_COUNT)) {
-            console.log(chalk.green("[Report]"), "Generating HTML report for all users...");
-            console.log(chalk.green("[Report]"), "Users to include in report:", users.length);
+            logger.process("Generating HTML report for all users...");
+            logger.data("Users to include in report", users.length);
             const htmlFilePath = await generateHTML(users);
 
             if (process.env.OPEN_HTML_PAGES === "true") {
-                console.log(chalk.green("[Report]"), "Opening HTML page...");
+                logger.process("Opening HTML page...");
                 try {
                     const open = (await import('open')).default;
                     await open(htmlFilePath);
                 } catch (err) {
-                    console.error(chalk.red("[Error]"), "Failed to open HTML page:", err);
+                    logger.error("Failed to open HTML page", err);
                 }
             }
         }

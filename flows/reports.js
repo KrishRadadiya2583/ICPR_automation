@@ -1,11 +1,11 @@
-const chalk = require("chalk");
+const logger = require("../utils/logger");
 const delay = require("../utils/delay");
 const { randomMobile } = require("../utils/generator");
 
 async function generateReportsAndUnlock(page) {
     for (let i = 1; i <= process.env.REPORT_COUNT; i++) {
         if (process.env.ENABLE_CREATE_REPORT != "true") {
-            console.log(chalk.bgYellowBright("report generation skipped"));
+            logger.warn("report generation skipped");
             break;
         }
         else {
@@ -14,7 +14,7 @@ async function generateReportsAndUnlock(page) {
             await delay(process.env.COMMON_DELAY_ONCLICKS);
             await page.click('a[data-title="Search other Number"]');
 
-            console.log("generate new report button click success");
+            logger.process("generate new report button click success");
 
             // input number for new report
             await delay(process.env.COMMON_DELAY_ONCLICKS);
@@ -24,7 +24,7 @@ async function generateReportsAndUnlock(page) {
             const inputs = await page.$$('.ant-input-outlined.input-form.form-control');
             await inputs[1].type(randomMobile(), { delay: 50 }); // second input
 
-            console.log("number enter success");
+            logger.process("number enter success");
 
             // click on submit
             await delay(process.env.COMMON_DELAY_ONCLICKS);
@@ -32,10 +32,10 @@ async function generateReportsAndUnlock(page) {
             await delay(process.env.COMMON_DELAY_ONCLICKS);
             await page.click("#btnSubmit");
 
-            console.log("submit button click success");
+            logger.process("submit button click success");
 
             await page.waitForSelector('a[data-title="Search other Number"]', { visible: true, timeout: 60000 });
-            console.log(chalk.bgGreen("report " + i + " generate  successfull"));
+            logger.success("report " + i + " generate  successfull");
             await delay(500);
         }
     }
@@ -55,24 +55,24 @@ async function generateReportsAndUnlock(page) {
         // Play sound for unlock
         process.stdout.write('\x07');
 
-        console.log(chalk.bgGreenBright("unlock latest report success"));
+        logger.success("unlock latest report success");
 
         // Always open the report
-        console.log(chalk.bgGray("report open successfull"));
+        logger.success("report open successfull");
 
         // close info page
         await page.waitForSelector(".accuracy__transparent_btn", { visible: true });
         await delay(process.env.COMMON_DELAY_ONCLICKS);
         await page.click(".accuracy__transparent_btn");
 
-        console.log(chalk.bgMagentaBright("info page close success"));
+        logger.process("info page close success");
 
         // view report
         await page.waitForSelector(".report__popup_pay_btn", { visible: true });
         await delay(process.env.COMMON_DELAY_ONCLICKS);
         await page.click(".report__popup_pay_btn");
 
-        console.log(chalk.bgYellowBright("view report success"));
+        logger.success("view report success");
     }
 }
 

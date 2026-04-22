@@ -1,11 +1,11 @@
 const inquirer = require('inquirer');
-const chalk = require("chalk");
-const { updateConfig } = require("./config/configManager");
+const logger = require("./utils/logger");
+const { updateConfig } = require("./config/configManager");             
 const { runAutomation } = require("./core/automation");
 
 async function startInteractiveCli() {
-    console.log(chalk.cyan('\n🚀 Full Interactive Automation CLI\n'));
-    console.log(chalk.gray('Press Enter to use [default] values\n'));
+    logger.header('Full Interactive Automation CLI');
+    logger.info('Press Enter to use [default] values\n');
 
     const answers = await inquirer.prompt([
         // --- Website Configuration ---
@@ -152,7 +152,7 @@ async function startInteractiveCli() {
             when: (ans) => ans.HTML_PAGE_CREATION_FOR_USER_DETAILS
         },
 
-        // --- Browser behavior & Recording ---
+        // --- Browser behavior & Recording
         {
             type: 'confirm',
             name: 'BROWSER_CLOSE_ON_COMPLETION',
@@ -197,13 +197,13 @@ async function startInteractiveCli() {
     finalConfig[answers.activeFlow] = 'true';
     updateConfig(finalConfig);
 
-    console.log(chalk.green('\n✓ All configurations updated. Starting automation...\n'));
+    logger.success('All configurations updated. Starting automation...\n');
     await runAutomation();
 }
 
 if (require.main === module) {
     startInteractiveCli().catch(err => {
-        console.error(chalk.red('\n❌ CLI Error:'), err);
+        logger.error('CLI Error', err);
         process.exit(1);
     });
 }

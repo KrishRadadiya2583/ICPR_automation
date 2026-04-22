@@ -1,4 +1,4 @@
-const chalk = require("chalk");
+const logger = require("../utils/logger");
 const delay = require("../utils/delay");
 
 async function logout(page) {
@@ -13,7 +13,7 @@ async function logout(page) {
 
     await page.waitForNavigation({ waitUntil: 'load' });
 
-    console.log(chalk.bgBlue("logout success"));
+    logger.success("Logout success");
 }
 
 module.exports = { logout };

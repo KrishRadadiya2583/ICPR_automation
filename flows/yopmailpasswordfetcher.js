@@ -1,3 +1,4 @@
+const logger = require("../utils/logger");
 const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
 async function fetchPassword(page, email) {
@@ -11,7 +12,7 @@ async function fetchPassword(page, email) {
   let lastMailContent = "";
 
   for (let attempt = 0; attempt < 25; attempt++) {
-    console.log(`Attempt ${attempt + 1}`);
+    logger.step(`Checking Yopmail (Attempt ${attempt + 1})`);
 
     await yopmailPage.mouse.move(
       100 + Math.random() * 200,
@@ -38,7 +39,7 @@ async function fetchPassword(page, email) {
     const emails = await inboxFrame.$$(".m");
 
     if (!emails.length) {
-      console.log("No emails yet...");
+      logger.process("No emails yet...");
       continue;
     }
 
@@ -62,11 +63,11 @@ async function fetchPassword(page, email) {
           document.body.innerText.trim()
         );
 
-        console.log("Email content:", content.slice(0, 100));
+        logger.info("Email content preview: " + content.slice(0, 50).replace(/\n/g, ' '));
 
-        // 🚨 CAPTCHA detection
+        // CAPTCHA detection
         if (content.includes("CAPTCHA")) {
-          console.log("⚠️ CAPTCHA detected, waiting...");
+          logger.warn("CAPTCHA detected, waiting...");
           await delay(15000);
           continue;
         }
@@ -74,13 +75,13 @@ async function fetchPassword(page, email) {
         if (!content || content === lastMailContent) continue;
         lastMailContent = content;
 
-        // 🎯 Target email detection
+        // Target email detection
         if (
           content.includes("Account Created") &&
           content.includes("Infochecker.com") &&
           content.toLowerCase().includes("password")
         ) {
-          console.log("✅ Target email found");
+          logger.success("Target email found");
 
           const lines = content.split("\n").map((l) => l.trim());
 
@@ -94,13 +95,13 @@ async function fetchPassword(page, email) {
           }
 
           if (password) {
-            console.log("✅ Password:", password);
+            logger.data("Password", password);
             await yopmailPage.close(); // 👉 close only tab
             return password;
           }
         }
       } catch (err) {
-        console.log("Error reading email, retrying...");
+        logger.error("Error reading email, retrying...");
       }
     }
 

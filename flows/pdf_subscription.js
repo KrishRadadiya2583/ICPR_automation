@@ -1,4 +1,4 @@
-const chalk = require("chalk");
+const logger = require("../utils/logger");
 const delay = require("../utils/delay");
 const { randomMobile } = require("../utils/generator");
 
@@ -9,7 +9,7 @@ async function downloadPDF(page) {
     await page.waitForSelector(`a[data-title="PDF"]`, { visible: true, timeout: 30000 });
     await delay(2000);
     await page.click(`a[data-title="PDF"]`, { delay: 10, clickCount: 10 });
-    console.log(chalk.green("[PDF]"), "Clicked on PDF subscription link");
+    logger.success("Clicked on PDF subscription link");
 
     await delay(process.env.COMMON_DELAY_ONCLICKS);
 
@@ -25,7 +25,7 @@ async function downloadPDF(page) {
 
 
   } catch (err) {
-    console.log(chalk.red("[PDF]"), "Failed to download PDF:", err);
+    logger.error("Failed to download PDF", err);
   }
 }
 

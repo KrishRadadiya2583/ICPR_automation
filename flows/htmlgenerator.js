@@ -1,6 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 
+const logger = require("../utils/logger");
+
 function generateHTML(users) {
     const rows = users.map((user, index) => `
         <tr class="table-row">
@@ -601,7 +603,7 @@ async function getToken(index, btnEl) {
     fs.mkdirSync(path.dirname(filePath), { recursive: true });
     fs.writeFileSync(filePath, html, "utf-8");
 
-    console.log("HTML Generated:", filePath);
+    logger.success(`HTML Generated: ${filePath}`);
 
     return filePath;
 }

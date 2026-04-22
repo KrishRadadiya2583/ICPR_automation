@@ -1,11 +1,11 @@
 const { randomMobile, randomEmail } = require("../utils/generator");
 const delay = require("../utils/delay");
-const chalk = require("chalk");
+const logger = require("../utils/logger");
 
 async function searchmobileno(page) {
 
     const mobile = randomMobile();
-    console.log(chalk.blue("Mobile:"), mobile);
+    logger.data("Mobile", mobile);
 
     await page.waitForSelector("input[placeholder='Enter a phone number']");
     await page.type("input[placeholder='Enter a phone number']", mobile, { delay: 50 });
@@ -16,14 +16,14 @@ async function searchmobileno(page) {
             page.waitForNavigation(),
             page.click("button[type='submit']")
         ]);
-        console.log(chalk.green("Search submitted"));
+        logger.success("Search submitted");
     }
     else {
         await delay(500)
         await page.waitForSelector(".span-text , button[type='submit'] , .input-suffix", { visible: true, clickCount: 10 });
         await delay(500)
         await page.click(".span-text , button[type='submit'] , .input-suffix");
-        console.log(chalk.green("Search submitted"));
+        logger.success("Search submitted");
     }
 
     return mobile;
