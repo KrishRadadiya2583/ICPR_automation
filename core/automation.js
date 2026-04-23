@@ -33,9 +33,32 @@ async function runAutomation() {
         }
         browser = await launchBrowser();
         const pages = await browser.pages();
+
         page = pages[0]; // use existing tab
         page.setDefaultTimeout(90000);
         page.setDefaultNavigationTimeout(90000);
+      
+         if (process.env.CF_ACCESS_CLIENT_ID && process.env.CF_ACCESS_CLIENT_SECRET) {
+
+        // await page.setExtraHTTPHeaders({
+        //     "CF-Access-Client-Id": process.env.CF_ACCESS_CLIENT_ID,
+        //     "CF-Access-Client-Secret": process.env.CF_ACCESS_CLIENT_SECRET
+        // });
+
+        await page.setRequestInterception(true);
+
+        page.on('request', (req) => {
+            const headers = {
+                ...req.headers(),
+                "CF-Access-Client-Id": process.env.CF_ACCESS_CLIENT_ID,
+                "CF-Access-Client-Secret": process.env.CF_ACCESS_CLIENT_SECRET
+            };
+
+  req.continue({ headers });
+});
+
+        logger.process("Cloudflare Access headers applied");
+    }
 
         if (process.env.ENABLE_RECORDING === "true") {
             recorder = await startRecording(page);
