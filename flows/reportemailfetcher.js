@@ -1,6 +1,8 @@
 const logger = require("../utils/logger");
 const delay = require("../utils/delay");
 const { handlePayment } = require("./payment");
+const { cloudAccess } = require("../helper/cloud_access");
+
 async function reportEmailFetcher(page, email) {
     const yopmailPage = await page.browser().newPage();
 
@@ -117,10 +119,20 @@ async function reportEmailFetcher(page, email) {
 
                                 if (newTarget) {
                                     const page = await newTarget.page();
-                                    await page.goto(page.url());
-                                    logger.info(`Opened in new tab: ${page.url()}`);
+
+                                    // Wait for the new tab to finish its initial navigation so we get the real URL
+                                    await page.waitForNavigation({ waitUntil: "domcontentloaded" }).catch(() => { });
+
+                                    const targetUrl = page.url(); // ✅ capture real URL BEFORE cloudAccess
+                                    logger.info(`Opened in new tab: ${targetUrl}`);
 
                                     await yopmailPage.close();
+
+                                    // Now set headers via cloudAccess
+                                    await cloudAccess(page);
+
+                                    // Reload the real URL — headers are now active
+                                    await page.goto(targetUrl, { waitUntil: "networkidle0", timeout: 60000 });
 
                                     await delay(process.env.COMMON_DELAY_ONCLICKS);
 
