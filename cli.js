@@ -21,31 +21,6 @@ async function startInteractiveCli() {
             default: process.env.WEBSITE_URL
         },
 
-        // --- Puppeteer Settings ---
-        {
-            type: 'confirm',
-            name: 'PUPPETEER_HEADLESS',
-            message: 'Run in Headless Mode? on/off',
-            default: process.env.PUPPETEER_HEADLESS === 'true'
-        },
-        {
-            type: 'confirm',
-            name: 'PUPPETEER_START_MAXIMIZED',
-            message: 'Should the browser start maximized?',
-            default: process.env.PUPPETEER_START_MAXIMIZED === 'true'
-        },
-        {
-            type: 'list',
-            name: 'PUPPETEER_DEFAULT_VIEWPORT',
-            message: 'Select Browser Viewport:',
-            choices: [
-                { name: 'Default (Auto)', value: 'null' },
-                { name: 'MacBook Pro 14" (1728x1117)', value: '{"width":1728,"height":1117}' },
-                { name: 'Full HD Laptop (1920x1080)', value: '{"width":1920,"height":1080}' }
-            ],
-            default: process.env.PUPPETEER_DEFAULT_VIEWPORT || 'null'
-        },
-
         // --- Execution Flow ---
         {
             type: 'list',
@@ -86,14 +61,6 @@ async function startInteractiveCli() {
             name: 'USER_REGISTRATION_COUNT',
             message: 'Number of users to register at once:',
             default: process.env.USER_REGISTRATION_COUNT || '1',
-            validate: val => !isNaN(val) || 'Enter a number',
-            when: (ans) => ans.nextStep === 'continue'
-        },
-        {
-            type: 'input',
-            name: 'MAX_RETRIES',
-            message: 'Max retries on failure:',
-            default: process.env.MAX_RETRIES || '3',
             validate: val => !isNaN(val) || 'Enter a number',
             when: (ans) => ans.nextStep === 'continue'
         },
@@ -198,6 +165,7 @@ async function startInteractiveCli() {
         ...answers,
         PUPPETEER_HEADLESS: String(answers.PUPPETEER_HEADLESS ?? (process.env.PUPPETEER_HEADLESS === 'true')),
         PUPPETEER_START_MAXIMIZED: String(answers.PUPPETEER_START_MAXIMIZED ?? (process.env.PUPPETEER_START_MAXIMIZED === 'true')),
+        PUPPETEER_DEFAULT_VIEWPORT: answers.PUPPETEER_DEFAULT_VIEWPORT || process.env.PUPPETEER_DEFAULT_VIEWPORT || 'null',
         
         USER_REGISTRATION_COUNT: answers.USER_REGISTRATION_COUNT || process.env.USER_REGISTRATION_COUNT || '1',
         MAX_RETRIES: answers.MAX_RETRIES || process.env.MAX_RETRIES || '3',
