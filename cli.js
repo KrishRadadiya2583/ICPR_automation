@@ -12,7 +12,7 @@ async function startInteractiveCli() {
         {
             type: 'list',
             name: 'WEBSITE_URL',
-            message: 'Select Target Environment URL:',
+            message: 'Select Target Environment :',
             choices: [
                 { name: 'Dev Environment', value: 'https://dev-pr.infochecker.com/' },
                 { name: 'Stage Environment', value: 'https://stage-pr.infochecker.com/' },
@@ -25,7 +25,7 @@ async function startInteractiveCli() {
         {
             type: 'confirm',
             name: 'PUPPETEER_HEADLESS',
-            message: 'Run in Headless Mode?',
+            message: 'Run in Headless Mode? on/off',
             default: process.env.PUPPETEER_HEADLESS === 'true'
         },
         {
@@ -50,7 +50,7 @@ async function startInteractiveCli() {
         {
             type: 'list',
             name: 'activeFlow',
-            message: 'Select Execution Flow:',
+            message: 'Select Execution Flow for your desire subscription type:',
             choices: [
                 { name: 'Discounted Full Access', value: 'ENABLE_DISCOUNTED_FULL_FLOW' },
                 { name: 'Pro Access', value: 'ENABLE_PRO_ACCESS_FLOW' },
@@ -74,7 +74,7 @@ async function startInteractiveCli() {
         {
             type: 'input',
             name: 'USER_REGISTRATION_COUNT',
-            message: 'Number of users to register:',
+            message: 'Number of users to register at once:',
             default: process.env.USER_REGISTRATION_COUNT || '1',
             validate: val => !isNaN(val) || 'Enter a number'
         },
@@ -126,14 +126,14 @@ async function startInteractiveCli() {
         {
             type: 'confirm',
             name: 'UNLOCK_REPORT',
-            message: 'Auto-unlock the latest report?',
+            message: 'Auto-unlock the latest report after report generation?',
             default: process.env.UNLOCK_REPORT === 'true',
             when: (ans) => ans.ENABLE_CREATE_REPORT
         },
         {
             type: 'confirm',
             name: 'DOWNLOAD_PDF',
-            message: 'Download PDF reports?',
+            message: 'Download PDF reports / pdf_subscription?',
             default: process.env.DOWNLOAD_PDF === 'true'
         },
 
@@ -141,13 +141,13 @@ async function startInteractiveCli() {
         {
             type: 'confirm',
             name: 'HTML_PAGE_CREATION_FOR_USER_DETAILS',
-            message: 'Create local HTML result pages?',
+            message: 'Create local HTML result pages for user credentials and details?',
             default: process.env.HTML_PAGE_CREATION_FOR_USER_DETAILS === 'true'
         },
         {
             type: 'confirm',
             name: 'OPEN_HTML_PAGES',
-            message: 'Auto-open generated HTML pages?',
+            message: 'Auto-open generated HTML pages with user credentials and details?',
             default: process.env.OPEN_HTML_PAGES === 'true',
             when: (ans) => ans.HTML_PAGE_CREATION_FOR_USER_DETAILS
         },

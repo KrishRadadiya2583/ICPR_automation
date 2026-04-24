@@ -1,5 +1,6 @@
 const logger = require("../utils/logger");
 const fs = require('fs');
+const {cloudAccess} = require('../helper/cloud_access');
 const { launchBrowser } = require("../config/puppeteer");
 const { ensureAtHome } = require("../flows/navigation");
 const { registerusers } = require("../flows/registration");
@@ -8,6 +9,7 @@ const { logout } = require("../flows/auth");
 const { downloadPDF } = require("../flows/pdf_subscription");
 const delay = require("../utils/delay");
 const { startRecording, stopRecording } = require('../helper/recording');
+
 
 async function runAutomation() {
     let browser;
@@ -38,28 +40,9 @@ async function runAutomation() {
         page.setDefaultTimeout(90000);
         page.setDefaultNavigationTimeout(90000);
       
-         if (process.env.CF_ACCESS_CLIENT_ID && process.env.CF_ACCESS_CLIENT_SECRET) {
-
-        // await page.setExtraHTTPHeaders({
-        //     "CF-Access-Client-Id": process.env.CF_ACCESS_CLIENT_ID,
-        //     "CF-Access-Client-Secret": process.env.CF_ACCESS_CLIENT_SECRET
-        // });
-
-        await page.setRequestInterception(true);
-
-        page.on('request', (req) => {
-            const headers = {
-                ...req.headers(),
-                "CF-Access-Client-Id": process.env.CF_ACCESS_CLIENT_ID,
-                "CF-Access-Client-Secret": process.env.CF_ACCESS_CLIENT_SECRET
-            };
-
-  req.continue({ headers });
-});
-
-        logger.process("Cloudflare Access headers applied");
-    }
-
+        // cloud access function  for skip cloud authentication popup
+        await cloudAccess(page);
+        
         if (process.env.ENABLE_RECORDING === "true") {
             recorder = await startRecording(page);
         }
