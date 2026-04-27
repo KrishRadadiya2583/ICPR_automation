@@ -42,6 +42,20 @@ async function runAutomation() {
       
         // cloud access function  for skip cloud authentication popup
         await cloudAccess(page);
+
+        // Apply cloudAccess to any newly opened pages (e.g. target="_blank" links)
+        browser.on('targetcreated', async (target) => {
+            if (target.type() === 'page') {
+                try {
+                    const newPage = await target.page();
+                    if (newPage) {
+                        await cloudAccess(newPage);
+                    }
+                } catch (err) {
+                    // Ignore errors if target is closed quickly
+                }
+            }
+        });
         
         if (process.env.ENABLE_RECORDING === "true") {
             recorder = await startRecording(page);

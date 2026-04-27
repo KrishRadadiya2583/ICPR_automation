@@ -107,31 +107,19 @@ async function reportEmailFetcher(page, email) {
 
                                 await delay(2000);
 
-                                // click and detect new tab
-                                const [newTarget] = await Promise.all([
-                                    yopmailPage.browser().waitForTarget(
-                                        target => target.opener() === yopmailPage.target(),
-                                        { timeout: 10000 }
-                                    ).catch(() => null),
-                                    link.click()
-                                ]);
+                                // Instead of clicking, get the href and open a new page manually
+                                const targetUrl = await mailFrame.evaluate(el => el.href, link);
+                                logger.info(`Target URL: ${targetUrl}`);
 
+                                const browser = yopmailPage.browser();
+                                await yopmailPage.close();
 
-                                if (newTarget) {
-                                    const page = await newTarget.page();
-
-                                    // Wait for the new tab to finish its initial navigation so we get the real URL
-                                    await page.waitForNavigation({ waitUntil: "domcontentloaded" }).catch(() => { });
-
-                                    const targetUrl = page.url(); // ✅ capture real URL BEFORE cloudAccess
-                                    logger.info(`Opened in new tab: ${targetUrl}`);
-
-                                    await yopmailPage.close();
-
+                                {
+                                    const page = await browser.newPage();
+                                    
                                     // Now set headers via cloudAccess
                                     await cloudAccess(page);
-
-                                    // Reload the real URL — headers are now active
+                                    
                                     await page.goto(targetUrl, { waitUntil: "networkidle0", timeout: 60000 });
 
                                     await delay(process.env.COMMON_DELAY_ONCLICKS);
@@ -153,11 +141,6 @@ async function reportEmailFetcher(page, email) {
                                     await delay(process.env.COMMON_DELAY_ONCLICKS);
                                     await handlePayment(page);
                                     await delay(process.env.COMMON_DELAY_ONCLICKS);
-
-
-
-                                } else {
-                                    logger.process("Clicked (same tab)");
                                 }
 
                                 return; // stop everything once clicked

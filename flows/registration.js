@@ -9,6 +9,7 @@ const { reportEmailFetcher } = require("./reportemailfetcher");
 const { searchmobileno } = require("../helper/searchmobileno");
 const { useremailtype } = require("../helper/useremailtype");
 const { free_platform_access } = require("../helper/free_platform_access");
+const { cloudAccess } = require("../helper/cloud_access");
 
 const users = [];
 async function registerusers(page) {
@@ -96,8 +97,27 @@ async function registerusers(page) {
             if (process.env.OPEN_HTML_PAGES === "true") {
                 logger.process("Opening HTML page...");
                 try {
-                    const open = (await import('open')).default;
-                    await open(htmlFilePath);
+
+                    await page.goto(`file://${htmlFilePath}`, {
+                        waitUntil: 'load',
+                    });
+
+                    await page.waitForSelector("#fetch-token", { visible: true, timeout: 10000 });
+                    await page.click("#fetch-token");
+
+
+                      
+                    await page.waitForSelector("#login-btn", { visible: true, timeout: 10000 });
+                    const loginUrl = await page.$eval("#login-btn a", el => el.href);
+                    console.log(loginUrl)
+                    
+                    const newPage = await page.browser().newPage();
+
+                    await cloudAccess(newPage);
+                    await newPage.goto(loginUrl);
+                    
+                    await delay(2000)
+
                 } catch (err) {
                     logger.error("Failed to open HTML page", err);
                 }

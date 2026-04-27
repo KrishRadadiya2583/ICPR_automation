@@ -28,7 +28,7 @@ function generateHTML(users) {
             </td>
 
             <td data-label="Action">
-                <button class="btn btn-primary" onclick="getToken(${index}, this)">
+                <button class="btn btn-primary" id="fetch-token" onclick="getToken(${index}, this)">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon"><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path><path d="M12 22v-4"></path><path d="M12 8v-4"></path><path d="M8 12h8"></path><circle cx="16" cy="16" r="2"></circle><circle cx="16" cy="4" r="2"></circle></svg>
                     <span>Fetch Token</span>
                 </button>
@@ -44,7 +44,7 @@ function generateHTML(users) {
             </td>
 
              <td data-label="Action">
-                <button class="btn btn-primary">
+                <button class="btn btn-primary" id="login-btn">
                 <a href="${process.env.WEBSITE_URL}en/login" target="_blank"
    style="display: flex; align-items: center; gap: 0.5rem; color: white; text-decoration: none;">
    Login

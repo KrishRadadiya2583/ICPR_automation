@@ -44,7 +44,7 @@ app.get('/api/config', (req, res) => {
         RECORDING_SAVE_PATH: process.env.RECORDING_SAVE_PATH || ''
     };
     res.json(config);
-});
+}); 
 
 // API endpoint to configure and run automation (UI)
 app.post('/api/config-and-run', async (req, res) => {
