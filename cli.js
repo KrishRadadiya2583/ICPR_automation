@@ -14,8 +14,8 @@ async function startInteractiveCli() {
             name: 'WEBSITE_URL',
             message: 'Select Target Environment :',
             choices: [
-                { name: 'Dev Environment', value: 'https://dev-pr.infochecker.com/' },
-                { name: 'Stage Environment', value: 'https://stage-pr.infochecker.com/' },
+                { name: 'Dev Environment', value: 'https://dev.infochecker.com/' },
+                { name: 'Stage Environment', value: 'https://stage.infochecker.com/' },
                 { name: 'UAT Environment', value: 'https://uat.infochecker.com/' }
             ],
             default: process.env.WEBSITE_URL
