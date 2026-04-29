@@ -9,7 +9,7 @@ async function handlePayment(page) {
 
     const frame = await findPaymentFrame(page);
 
-    await page.waitForSelector('iframe#solid-payment-form-iframe, iframe[name="solid-payment-form-iframe"]', { visible: true, timeout: 60000 });
+    await page.waitForSelector('iframe#payment-form-iframe, iframe[name="payment-form-iframe"]', { visible: true, timeout: 60000 });
 
     await delay(3000);
 

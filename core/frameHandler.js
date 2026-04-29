@@ -3,7 +3,7 @@ const delay = require("../utils/delay");
 
 
 async function findPaymentFrame(page) {
-    const selector = 'iframe#solid-payment-form-iframe, iframe[name="solid-payment-form-iframe"]';
+    const selector = 'iframe#payment-form-iframe, iframe[name="payment-form-iframe"]';
 
     const start = Date.now();
 

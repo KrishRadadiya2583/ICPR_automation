@@ -7,8 +7,8 @@ async function searchmobileno(page) {
     const mobile = randomMobile();
     logger.data("Mobile", mobile);
 
-    await page.waitForSelector("input[placeholder='Enter a phone number']");
-    await page.type("input[placeholder='Enter a phone number']", mobile, { delay: 50 });
+    await page.waitForSelector('input[inputmode="tel"]', { visible: true, timeout: 30000 });
+    await page.type('input[inputmode="tel"]', mobile, { delay: 50 });
 
     // ===== STEP 2: SEARCH =====
     if (process.env.ENABLE_DISCOUNTED_FULL_FLOW === "true" || process.env.ENABLE_STANDARD_FLOW === "true") {
