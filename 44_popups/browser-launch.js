@@ -1,0 +1,145 @@
+require("dotenv").config();
+
+const fs = require("fs");
+const path = require("path");
+const { launchBrowser } = require("../config/puppeteer");
+const { cloudAccess } = require("../helper/cloud_access");
+const { ensureAtHome } = require("../flows/navigation");
+
+const TIMEOUT = Number(process.env.POPUP_TIMEOUT_MS || 60_000);
+const SCREENSHOT_DIRECTORY = path.join(__dirname, "screenshots", "emailpopups");
+
+// Add the language values here later, for example:
+// const LANGUAGES = ["English", "Spanish", "French"];
+const LANGUAGES = [
+    "en", "cs", "de", "es", "el", "fr", "hu", "fi", "et", "hi", "yue", "th", "bn", "ms",
+            "hr","ko", "id", "ja", "sv", "it", "bg", "sr", "uk", "he", "sk", "da", "ar",
+            "nl", "no", "pl", "zh", "pt", "ro", "sl", "tr", "pt-br", "vi", "bs", "tk", "zu", "ru", "lv", "lt", "fil"];
+
+
+const SELECTORS = {
+  numberInput: [
+    'input[inputmode="tel"]',
+    'input[type="tel"]',
+    'input[name*="phone" i]',
+    'input[name*="mobile" i]',
+  ],
+  submit: [
+    'button[type="submit"]',
+    'input[type="submit"]',
+    ".span-text",
+    ".input-suffix",
+  ],
+  popupRoot: [
+    ".ant-modal-root",
+    '[role="dialog"]',
+  ],
+};
+
+function randomMobileNumber() {
+  return `9${Math.floor(1_000_000_00 + Math.random() * 9_000_000_00)}`;
+}
+
+async function waitForAny(page, selectors, timeout = TIMEOUT) {
+  const selector = await page.waitForFunction(
+    (candidates) => candidates.find((candidate) => {
+      const element = document.querySelector(candidate);
+      if (!element) return false;
+      const style = window.getComputedStyle(element);
+      return style.visibility !== "hidden" && style.display !== "none";
+    }),
+    { timeout },
+    selectors,
+  );
+
+  return selector.jsonValue();
+}
+
+async function enterNumberAndSubmit(page, mobileNumber) {
+  const inputSelector = await waitForAny(page, SELECTORS.numberInput);
+  await page.click(inputSelector, { clickCount: 3 });
+  await page.type(inputSelector, mobileNumber, { delay: 50 });
+
+  const submitSelector = await waitForAny(page, SELECTORS.submit);
+  await page.click(submitSelector);
+  console.log(`Submitted mobile number: ${mobileNumber}`);
+}
+
+function languageUrl(currentUrl, language) {
+  const url = new URL(currentUrl);
+  const pathParts = url.pathname.split("/").filter(Boolean);
+
+  if (pathParts.length) pathParts[0] = language;
+  else pathParts.push(language);
+
+  url.pathname = `/${pathParts.join("/")}`;
+  return url.toString();
+}
+
+async function captureScreenshot(page, name) {
+  const screenshotPath = path.join(SCREENSHOT_DIRECTORY, `${name}.png`);
+  await page.screenshot({ path: screenshotPath, fullPage: true });
+  console.log(`Screenshot saved: ${screenshotPath}`);
+}
+
+async function submitLanguageAndCapture(page, baseUrl, language) {
+  const targetUrl = languageUrl(baseUrl, language);
+  if (page.url() !== targetUrl) {
+    await page.goto(targetUrl, { waitUntil: "networkidle2", timeout: TIMEOUT });
+  }
+
+  console.log(`Language base URL opened: ${page.url()}`);
+  await enterNumberAndSubmit(page, randomMobileNumber());
+  await waitForAny(page, SELECTORS.popupRoot);
+  await new Promise((resolve) => setTimeout(resolve, 1_000));
+  await captureScreenshot(page, `email_popup_${language}`);
+}
+
+async function run() {
+  const browser = await launchBrowser();
+  const pages = await browser.pages();
+  const page = pages[0] || await browser.newPage();
+  page.setDefaultTimeout(TIMEOUT);
+  page.setDefaultNavigationTimeout(TIMEOUT);
+
+  // Add the Cloudflare service-token headers before the first navigation.
+  await cloudAccess(page);
+
+  // Apply the same access headers if the site opens another browser tab.
+  browser.on("targetcreated", async (target) => {
+    if (target.type() !== "page") return;
+
+    try {
+      const newPage = await target.page();
+      if (newPage) await cloudAccess(newPage);
+    } catch (error) {
+      console.warn("Could not apply Cloudflare Access to new tab:", error.message);
+    }
+  });
+
+  try {
+    fs.mkdirSync(SCREENSHOT_DIRECTORY, { recursive: true });
+    await ensureAtHome(page);
+    const baseUrl = page.url();
+    console.log(`Stored base URL: ${baseUrl}`);
+
+    if (LANGUAGES.length) {
+      for (const language of LANGUAGES) {
+        await submitLanguageAndCapture(page, baseUrl, language);
+      }
+    } else {
+      console.log("No additional languages configured.");
+    }
+  } catch (error) {
+    console.error("Popup automation failed:", error.message);
+    process.exitCode = 1;
+  } finally {
+    if (process.env.BROWSER_CLOSE_ON_COMPLETION === "true") {
+      await browser.close();
+    } else {
+      console.log("Browser left open. Press Ctrl+C to stop the script.");
+    }
+  }
+}
+
+run();
