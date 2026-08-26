@@ -6,6 +6,9 @@
   "scripts": {
     "start": "node index.js",
     "cli": "node index.js --cli",
+    "popups": "node 44_popups/browser-launch.js",
+    "card-popup": "node 44_popups/card_popup.js",
+    "report-popup": "node 44_popups/report_popup.js",
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
